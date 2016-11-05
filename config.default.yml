@@ -1,0 +1,16 @@
+version: 0.1
+
+log:
+  level: 'debug'
+  formatter: 'text'
+
+http:
+  enabled: true
+  addr: ':9240'
+  host: 'localhost'
+  cors:
+    origins: ['*']
+    methods: ['*']
+    headers: ['*']
+    debug: false
+
