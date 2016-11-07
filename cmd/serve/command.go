@@ -1,7 +1,7 @@
 package serve
 
 import (
-	"github.com/danielkrainas/tinkersnest/agent"
+	"github.com/danielkrainas/tinkersnest/api/server"
 	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/context"
@@ -17,12 +17,12 @@ func run(ctx context.Context, args []string) error {
 		return err
 	}
 
-	agent, err := agent.New(ctx, config)
+	s, err := server.New(ctx, config)
 	if err != nil {
 		return err
 	}
 
-	return agent.Run()
+	return s.ListenAndServe()
 }
 
 var (

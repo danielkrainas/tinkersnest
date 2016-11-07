@@ -10,7 +10,6 @@ import (
 	"github.com/danielkrainas/tinkersnest/cmd/root"
 	_ "github.com/danielkrainas/tinkersnest/cmd/serve"
 	_ "github.com/danielkrainas/tinkersnest/cmd/version"
-	_ "github.com/danielkrainas/tinkersnest/containers/embedded"
 	"github.com/danielkrainas/tinkersnest/context"
 )
 

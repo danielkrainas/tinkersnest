@@ -149,7 +149,7 @@ type Config struct {
 	Storage Driver     `yaml:"storage"`
 }
 
-type v0_1Config Config
+type v1_0Config Config
 
 func newConfig() *Config {
 	config := &Config{
@@ -159,12 +159,9 @@ func newConfig() *Config {
 			Fields:    make(map[string]interface{}),
 		},
 
-		Containers: make(Driver),
-
 		HTTP: HTTPConfig{
-			Enabled: true,
-			Addr:    ":9181",
-			Host:    "localhost",
+			Addr: ":9240",
+			Host: "localhost",
 		},
 	}
 
@@ -180,17 +177,17 @@ func Parse(rd io.Reader) (*Config, error) {
 	p := NewParser("tinkersnest", []VersionedParseInfo{
 		{
 			Version: MajorMinorVersion(0, 1),
-			ParseAs: reflect.TypeOf(v0_1Config{}),
+			ParseAs: reflect.TypeOf(v1_0Config{}),
 			ConversionFunc: func(c interface{}) (interface{}, error) {
-				if v0_1, ok := c.(*v0_1Config); ok {
-					if v0_1.Containers.Type() == "" {
-						return nil, fmt.Errorf("no containers configuration provided")
+				if v1_0, ok := c.(*v1_0Config); ok {
+					if v1_0.Storage.Type() == "" {
+						return nil, fmt.Errorf("no storage configuration provided")
 					}
 
-					return (*Config)(v0_1), nil
+					return (*Config)(v1_0), nil
 				}
 
-				return nil, fmt.Errorf("Expected *v0_1Config, received %#v", c)
+				return nil, fmt.Errorf("Expected *v1_0Config, received %#v", c)
 			},
 		},
 	})
