@@ -1,0 +1,13 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/gorilla/handlers",
+			"repository": "https://github.com/gorilla/handlers",
+			"vcs": "git",
+			"revision": "e1b2144f2167de0e1042d1d35e5cba5119d4fb5d",
+			"branch": "master",
+			"notests": true
+		}
+	]
+}
