@@ -1,10 +1,10 @@
-# cSense API Client
+# TinkersNest API Client
 
-Client library for the cSense API. 
+Client library for the TinkersNest API. 
 
 Supported Endpoints:
 
-- Hooks
+- Blog Posts
 
 
 ## Installation
@@ -25,7 +25,7 @@ import (
 )
 
 // http/https url of the tinkersnest service
-const ENDPOINT = "http://localhost:9181"
+const ENDPOINT = "http://localhost:9240"
 
 func main() {
 	// Create a new client

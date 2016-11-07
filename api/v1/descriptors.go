@@ -12,9 +12,9 @@ var (
 	IDRegex = regexp.MustCompile(`(?i)[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}`)
 
 	versionHeader = describe.Parameter{
-		Name:        "cSense-API-Version",
+		Name:        "TinkersNest-API-Version",
 		Type:        "string",
-		Description: "The build version of the cSense API server.",
+		Description: "The build version of the TinkersNest API server.",
 		Format:      "<version>",
 		Examples:    []string{"0.0.0-dev"},
 	}
@@ -103,7 +103,7 @@ var routeDescriptors = []describe.Route{
 		Methods: []describe.Method{
 			{
 				Method:      "GET",
-				Description: "Check that the server supports the cSense V1 API.",
+				Description: "Check that the server supports the TinkersNest V1 API.",
 				Requests: []describe.Request{
 					{
 						Headers: []describe.Parameter{

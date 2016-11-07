@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	const ENDPOINT = "http://localhost:9181"
+	const ENDPOINT = "http://localhost:9240"
 
 	// Create a new client
 	c := client.New(ENDPOINT, http.DefaultClient)
@@ -24,23 +24,5 @@ func main() {
 
 	fmt.Println("sent ping")
 
-	// Create a hook
-	//=====================================
-	err = c.Hooks().CreateHook(&v1.NewHookRequest{
-		Name:   "Foo Hook",
-		TTL:    0,
-		Url:    "http://localhost:9181/v1",
-		Format: v1.FormatJSON,
-		Events: []v1.EventType{v1.EventCreate},
-		Criteria: &v1.Criteria{
-			ImageName: &v1.Condition{
-				Op:    v1.OperandEqual,
-				Value: "registry",
-			},
-		},
-	})
-
-	if err != nil {
-		panic("error creating hook")
-	}
+	// TODO: blog example
 }

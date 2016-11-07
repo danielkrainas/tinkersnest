@@ -27,14 +27,14 @@ clean:
 	rm dist
 
 compile:
-	go build -ldflags "-X main.appVersion=$(BUILD_VERSION)" .
+	CGO_ENABLED=0 go build -ldflags "-X main.appVersion=$(BUILD_VERSION)" .
 
 dist:
-	GOOS=linux go build -ldflags "-X main.appVersion=$(BUILD_VERSION)" -o dist .
+	CGO_ENABLED=0 go build -ldflags "-X main.appVersion=$(BUILD_VERSION)" -o dist .
+	CGO_ENABLED=0 go build -ldflags "-X main.appVersion=$(BUILD_VERSION)" -o tinkerctl/dist tinkerctl
 
 image:
-	docker build -t $(IMAGE_NAME) .
-	docker tag $(IMAGE_NAME) $(IMAGE_REPO):latest
+	docker build -t $(IMAGE_NAME) -t $(IMAGE_REPO):latest .
 
 test:
 	set -e; 
