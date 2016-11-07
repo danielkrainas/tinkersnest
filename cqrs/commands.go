@@ -47,7 +47,7 @@ func (r CommandRouter) Handle(ctx context.Context, c Command) error {
 		return ErrNoHandler
 	}
 
-	return h.Execute(ctx, c)
+	return h.Handle(ctx, c)
 }
 
 func WithCommandDispatch(ctx context.Context, d *CommandDispatcher) context.Context {
@@ -57,8 +57,8 @@ func WithCommandDispatch(ctx context.Context, d *CommandDispatcher) context.Cont
 func DispatchCommand(ctx context.Context, c Command) error {
 	d, ok := ctx.Value("cmd.dispatcher").(*CommandDispatcher)
 	if !ok || d == nil {
-		return nil, fmt.Errorf("no valid command dispatchers found in context")
+		return fmt.Errorf("no valid command dispatchers found in context")
 	}
 
-	return d.Dispatch(q)
+	return d.Dispatch(ctx, c)
 }

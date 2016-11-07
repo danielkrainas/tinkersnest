@@ -47,7 +47,7 @@ func (r QueryRouter) Execute(ctx context.Context, q Query) (interface{}, error) 
 		return nil, ErrNoExecutor
 	}
 
-	return exec.Execute(q)
+	return exec.Execute(ctx, q)
 }
 
 func WithQueryDispatch(ctx context.Context, d *QueryDispatcher) context.Context {
@@ -60,5 +60,5 @@ func DispatchQuery(ctx context.Context, q Query) (interface{}, error) {
 		return nil, fmt.Errorf("no valid query dispatchers found in context")
 	}
 
-	return d.Dispatch(q)
+	return d.Dispatch(ctx, q)
 }
