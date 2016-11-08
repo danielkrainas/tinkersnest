@@ -50,7 +50,7 @@ func (s *postStore) Handle(ctx context.Context, c cqrs.Command) error {
 func (s *postStore) SearchPosts(ctx context.Context, q *queries.SearchPosts) (interface{}, error) {
 	s.m.Lock()
 	defer s.m.Unlock()
-	return s.posts, nil
+	return s.posts[:], nil
 }
 
 func (s *postStore) StorePost(ctx context.Context, c *commands.StorePost) error {
