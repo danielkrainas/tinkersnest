@@ -12,6 +12,8 @@ var (
 )
 
 type Driver interface {
+	Init() error
+
 	Command() cqrs.CommandHandler
 	Query() cqrs.QueryExecutor
 }
