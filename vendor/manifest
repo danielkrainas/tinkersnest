@@ -10,6 +10,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/metal3d/go-slugify",
+			"repository": "https://github.com/metal3d/go-slugify",
+			"vcs": "git",
+			"revision": "7ac2014b2f23e254684c08d597496681d12c6a8a",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/satori/go.uuid",
 			"repository": "https://github.com/satori/go.uuid",
 			"vcs": "git",
