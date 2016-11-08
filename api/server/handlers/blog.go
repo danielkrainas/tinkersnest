@@ -54,7 +54,7 @@ func (ctx *blogHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	context.GetLoggerWithField(ctx, "post.id", p.ID).Infof("blog post %q created")
+	context.GetLoggerWithField(ctx, "post.id", p.ID).Infof("blog post %q created", p.Slug)
 	if err := v1.ServeJSON(w, p); err != nil {
 		context.GetLogger(ctx).Errorf("error sending blog post json: %v", err)
 	}
