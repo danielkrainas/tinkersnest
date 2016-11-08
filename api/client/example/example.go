@@ -24,5 +24,25 @@ func main() {
 
 	fmt.Println("sent ping")
 
-	// TODO: blog example
+	// Create a new blog post
+	//=====================================
+	post, err := c.Blog().CreatePost(&v1.CreatePostRequest{
+		Title: "Example Post",
+		Body:  "This was an example post using the tinkersnest/api/client package.",
+	})
+
+	if err != nil {
+		panic("error creating post")
+	}
+
+	fmt.Printf("created %q post.\n", post.Title)
+
+	// Search the blog posts
+	//=====================================
+	posts, err := c.Blog().SearchPosts()
+	if err != nil {
+		panic("error searching posts")
+	}
+
+	fmt.Printf("found %d posts\n", len(posts))
 }
