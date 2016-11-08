@@ -13,4 +13,3 @@ http:
     methods: ['*']
     headers: ['*']
     debug: false
-
