@@ -11,6 +11,7 @@ import (
 	_ "github.com/danielkrainas/tinkersnest/cmd/serve"
 	_ "github.com/danielkrainas/tinkersnest/cmd/version"
 	"github.com/danielkrainas/tinkersnest/context"
+	_ "github.com/danielkrainas/tinkersnest/storage/inmemory"
 )
 
 var appVersion string
