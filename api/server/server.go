@@ -34,7 +34,7 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 	}
 
 	log := context.GetLogger(ctx)
-	log.Info("initializing agent")
+	log.Info("initializing server")
 
 	storageDriver, err := configureStorage(ctx, config)
 	if err != nil {
