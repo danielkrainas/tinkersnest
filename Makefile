@@ -28,6 +28,7 @@ clean:
 
 compile:
 	CGO_ENABLED=0 go build -ldflags "-X main.appVersion=$(BUILD_VERSION)" .
+	CGO_ENABLED=0 go build ./api/client
 
 dist:
 	CGO_ENABLED=0 go build -ldflags "-X main.appVersion=$(BUILD_VERSION)" -o dist .
