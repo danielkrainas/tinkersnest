@@ -8,6 +8,7 @@ import (
 )
 
 var ErrNoExecutor = errors.New("no query executor")
+var ErrInvalidQuery = errors.New("invalid query for this executor")
 
 type Query interface{}
 

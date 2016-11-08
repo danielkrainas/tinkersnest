@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/danielkrainas/canaria-api/context"
+	"github.com/danielkrainas/tinkersnest/context"
 )
 
 var ErrNoHandler = errors.New("no command handler")
+var ErrInvalidCommand = errors.New("invalid command for this handler")
 
 type Command interface{}
 
@@ -37,8 +38,8 @@ func getCommandKey(c Command) string {
 	return fmt.Sprintf("%T", c)
 }
 
-func (r CommandRouter) Register(c Command, exec CommandHandler) {
-	r[getCommandKey(c)] = exec
+func (r CommandRouter) Register(c Command, handler CommandHandler) {
+	r[getCommandKey(c)] = handler
 }
 
 func (r CommandRouter) Handle(ctx context.Context, c Command) error {
