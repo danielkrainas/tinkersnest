@@ -5,6 +5,12 @@ import (
 	"net/http"
 )
 
+type CreatePostRequest struct {
+	Title string `json:"title"`
+	Slug  string `json:"slug"`
+	Body  string `json:"body"`
+}
+
 type Post struct {
 	ID      string `json:"id"`
 	Title   string `json:"title"`
