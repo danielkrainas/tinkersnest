@@ -10,13 +10,12 @@ import (
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/context"
-	"github.com/danielkrainas/tinkersnest/storage"
 )
 
 type dispatchFunc func(ctx context.Context, r *http.Request) http.Handler
 
 type App struct {
-	context.Context
+	context.Context // TODO: does this need to be a context?
 
 	config *configuration.Config
 
@@ -73,53 +72,14 @@ func NewApp(ctx context.Context, config *configuration.Config) (*App, error) {
 		return http.HandlerFunc(apiBase)
 	})
 
-	app.register(v1.RouteNameHook, hookDispatcher)
-	app.register(v1.RouteNameHooks, hookListDispatcher)
+	app.register(v1.RouteNameBlog, blogListDispatcher)
 	return app, nil
-}
-
-func (app *App) hookRequired(ctx context.Context, r *http.Request) bool {
-	route := mux.CurrentRoute(r)
-	routeName := route.GetName()
-	return route == nil || routeName == v1.RouteNameHook
-}
-
-func (app *App) loadHook(ctx *appRequestContext, r *http.Request) error {
-	hookID := context.GetStringValue(ctx, "vars.hook_id")
-	ctx.Context = context.WithLogger(ctx.Context, context.GetLoggerWithField(ctx.Context, "hook.id", hookID))
-
-	hook, err := storage.FromContext(app).Hooks().GetByID(ctx, hookID)
-	if err != nil {
-		return err
-	}
-
-	ctx.Context = context.WithValue(ctx.Context, "hook", hook)
-	return nil
 }
 
 func (app *App) dispatcher(dispatch dispatchFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := app.context(w, r)
 		ctx.Context = context.WithErrors(ctx.Context, make(errcode.Errors, 0))
-
-		if app.hookRequired(ctx, r) {
-			err := app.loadHook(ctx, r)
-			if err != nil {
-				context.GetLogger(ctx).Errorf("error loading hook for context: %v", err)
-				if err == storage.ErrNotFound {
-					ctx.Context = context.AppendError(ctx.Context, v1.ErrorCodeHookUnknown)
-				} else {
-					ctx.Context = context.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
-				}
-
-				errors := context.GetErrors(ctx)
-				if err := errcode.ServeJSON(w, errors); err != nil {
-					context.GetLogger(ctx).Errorf("error serving error json: %v (from %s)", err, errors)
-				}
-
-				return
-			}
-		}
 
 		dispatch(ctx, r).ServeHTTP(w, r)
 

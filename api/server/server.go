@@ -4,24 +4,27 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/rs/cors"
 	"github.com/urfave/negroni"
 
 	"github.com/danielkrainas/tinkersnest/api/server/handlers"
-	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/context"
+	"github.com/danielkrainas/tinkersnest/cqrs"
 	"github.com/danielkrainas/tinkersnest/storage"
 	storageDriverFactory "github.com/danielkrainas/tinkersnest/storage/factory"
 )
 
 type Server struct {
 	context.Context
-	config *configuration.Config
-	app    *handlers.App
-	server *http.Server
+	config  *configuration.Config
+	app     *handlers.App
+	server  *http.Server
+	query   *cqrs.QueryDispatcher
+	command *cqrs.CommandDispatcher
 }
 
 func New(ctx context.Context, config *configuration.Config) (*Server, error) {
@@ -33,10 +36,25 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 	log := context.GetLogger(ctx)
 	log.Info("initializing agent")
 
-	ctx, storageDriver, err := configureStorage(ctx, config)
+	storageDriver, err := configureStorage(ctx, config)
 	if err != nil {
 		return nil, err
 	}
+
+	query := &cqrs.QueryDispatcher{
+		Executors: []cqrs.QueryExecutor{
+			storageDriver.Query(),
+		},
+	}
+
+	command := &cqrs.CommandDispatcher{
+		Handlers: []cqrs.CommandHandler{
+			storageDriver.Command(),
+		},
+	}
+
+	ctx = cqrs.WithCommandDispatch(ctx, command)
+	ctx = cqrs.WithQueryDispatch(ctx, query)
 
 	app, err := handlers.NewApp(ctx, config)
 	if err != nil {
@@ -64,6 +82,8 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 		Context: ctx,
 		app:     app,
 		config:  config,
+		query:   query,
+		command: command,
 		server: &http.Server{
 			Addr:    config.HTTP.Addr,
 			Handler: n,
@@ -72,9 +92,6 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 
 	log.Infof("using %q logging formatter", config.Log.Formatter)
 	log.Infof("using %q storage driver", config.Storage.Type())
-	if !config.HTTP.Enabled {
-		log.Info("http api disabled")
-	}
 
 	return s, nil
 }
@@ -131,7 +148,7 @@ func loggingHandler(parent context.Context, handler http.Handler) http.Handler {
 	})
 }
 
-func configureStorage(ctx context.Context, config *configuration.Config) (context.Context, storage.Driver, error) {
+func configureStorage(ctx context.Context, config *configuration.Config) (storage.Driver, error) {
 	storageParams := config.Storage.Parameters()
 	if storageParams == nil {
 		storageParams = make(configuration.Parameters)
@@ -139,14 +156,14 @@ func configureStorage(ctx context.Context, config *configuration.Config) (contex
 
 	storageDriver, err := storageDriverFactory.Create(config.Storage.Type(), storageParams)
 	if err != nil {
-		return ctx, nil, err
+		return nil, err
 	}
 
 	if err := storageDriver.Init(); err != nil {
-		return ctx, nil, err
+		return nil, err
 	}
 
-	return storage.ForContext(ctx, storageDriver), storageDriver, nil
+	return storageDriver, nil
 }
 
 func configureLogging(ctx context.Context, config *configuration.Config) (context.Context, error) {

@@ -12,7 +12,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
 
-	"github.com/danielkrainas/tinkersnest/uuid"
+	"github.com/danielkrainas/tinkersnest/util/uuid"
 )
 
 var (

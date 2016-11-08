@@ -79,12 +79,15 @@ var (
     ]
 }`
 
-	hookBody = `{
-
+	blogPostBody = `{
+	"id": ...,
+	"created": <epoch seconds>,
+	"title": ...,
+	"body": ...
 }`
 
-	hooksBody = `[
-` + hookBody + `, ...
+	blogPostListBody = `[
+` + blogPostBody + `, ...
 ]`
 )
 
@@ -136,14 +139,14 @@ var routeDescriptors = []describe.Route{
 		},
 	},
 	{
-		Name:        RouteNameHooks,
-		Path:        "/v1/hooks",
+		Name:        RouteNameBlog,
+		Path:        "/v1/blog/posts",
 		Entity:      "[]Hook",
 		Description: "Route to retrieve the list of active hooks and create new ones.",
 		Methods: []describe.Method{
 			{
 				Method:      "GET",
-				Description: "Get all hooks",
+				Description: "Get all posts",
 				Requests: []describe.Request{
 					{
 						Headers: []describe.Parameter{
@@ -152,7 +155,7 @@ var routeDescriptors = []describe.Route{
 
 						Successes: []describe.Response{
 							{
-								Description: "All hooks returned",
+								Description: "All posts returned",
 								StatusCode:  http.StatusOK,
 								Headers: []describe.Parameter{
 									versionHeader,
@@ -161,7 +164,7 @@ var routeDescriptors = []describe.Route{
 
 								Body: describe.Body{
 									ContentType: "application/json; charset=utf-8",
-									Format:      hooksBody,
+									Format:      blogPostListBody,
 								},
 							},
 						},
@@ -170,7 +173,7 @@ var routeDescriptors = []describe.Route{
 			},
 			{
 				Method:      "PUT",
-				Description: "Create a hook",
+				Description: "Create a blog post",
 				Requests: []describe.Request{
 					{
 						Headers: []describe.Parameter{
@@ -183,7 +186,7 @@ var routeDescriptors = []describe.Route{
 
 						Successes: []describe.Response{
 							{
-								Description: "Hook created",
+								Description: "Post created",
 								StatusCode:  http.StatusCreated,
 								Headers: []describe.Parameter{
 									versionHeader,
@@ -192,115 +195,12 @@ var routeDescriptors = []describe.Route{
 
 								Body: describe.Body{
 									ContentType: "application/json; charset=utf-8",
-									Format:      hookBody,
+									Format:      blogPostBody,
 								},
 							},
 						},
 
 						Failures: []describe.Response{},
-					},
-				},
-			},
-		},
-	},
-	{
-		Name:        RouteNameHook,
-		Path:        "/v1/hooks/{hook_id:" + IDRegex.String() + "}",
-		Entity:      "Hook",
-		Description: "Route to remove, retrieve, and modify an existing hook.",
-		Methods: []describe.Method{
-			{
-				Method:      "GET",
-				Description: "Get a single hook",
-				Requests: []describe.Request{
-					{
-						Headers: []describe.Parameter{
-							hostHeader,
-						},
-
-						PathParameters: []describe.Parameter{
-							hookIDParameter,
-						},
-
-						Successes: []describe.Response{
-							{
-								Description: "The hook was returned successfully.",
-								StatusCode:  http.StatusOK,
-								Headers: []describe.Parameter{
-									versionHeader,
-									jsonContentLengthHeader,
-								},
-
-								Body: describe.Body{
-									ContentType: "application/json; charset=utf-8",
-									Format:      hookBody,
-								},
-							},
-						},
-
-						Failures: []describe.Response{
-							hookNotFoundResp,
-						},
-					},
-				},
-			},
-			{
-				Method:      "POST",
-				Description: "Modify an existing hook",
-				Requests: []describe.Request{
-					{
-						Headers: []describe.Parameter{
-							hostHeader,
-						},
-
-						PathParameters: []describe.Parameter{
-							hookIDParameter,
-						},
-
-						Successes: []describe.Response{
-							{
-								Description: "The hook was removed successfully.",
-								StatusCode:  http.StatusNoContent,
-								Headers: []describe.Parameter{
-									versionHeader,
-									zeroContentLengthHeader,
-								},
-							},
-						},
-
-						Failures: []describe.Response{
-							hookNotFoundResp,
-						},
-					},
-				},
-			},
-			{
-				Method:      "DELETE",
-				Description: "Remove a hook.",
-				Requests: []describe.Request{
-					{
-						Headers: []describe.Parameter{
-							hostHeader,
-						},
-
-						PathParameters: []describe.Parameter{
-							hookIDParameter,
-						},
-
-						Successes: []describe.Response{
-							{
-								Description: "The hook was removed successfully.",
-								StatusCode:  http.StatusNoContent,
-								Headers: []describe.Parameter{
-									versionHeader,
-									zeroContentLengthHeader,
-								},
-							},
-						},
-
-						Failures: []describe.Response{
-							hookNotFoundResp,
-						},
 					},
 				},
 			},
