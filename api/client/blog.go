@@ -64,7 +64,7 @@ func (api *blogAPI) CreatePost(create *v1.CreatePostRequest) (*v1.Post, error) {
 		return nil, err
 	}
 
-	r, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(body))
+	r, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
 	}
