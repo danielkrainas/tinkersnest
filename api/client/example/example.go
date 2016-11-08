@@ -32,7 +32,7 @@ func main() {
 	})
 
 	if err != nil {
-		panic("error creating post")
+		panic("error creating post: " + err.Error())
 	}
 
 	fmt.Printf("created %q post.\n", post.Title)
