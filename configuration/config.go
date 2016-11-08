@@ -176,7 +176,7 @@ func Parse(rd io.Reader) (*Config, error) {
 
 	p := NewParser("tinkersnest", []VersionedParseInfo{
 		{
-			Version: MajorMinorVersion(0, 1),
+			Version: MajorMinorVersion(1, 0),
 			ParseAs: reflect.TypeOf(v1_0Config{}),
 			ConversionFunc: func(c interface{}) (interface{}, error) {
 				if v1_0, ok := c.(*v1_0Config); ok {
