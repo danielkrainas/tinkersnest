@@ -15,12 +15,14 @@ type Client struct {
 	urlBuilder *v1.URLBuilder
 	Endpoint   string
 	HTTPClient *http.Client
+	UserAgent  string
 }
 
 func New(endpoint string, httpClient *http.Client) *Client {
 	return &Client{
 		Endpoint:   endpoint,
 		HTTPClient: httpClient,
+		UserAgent:  CLIENT_USER_AGENT,
 	}
 }
 
@@ -62,6 +64,6 @@ func (c *Client) Ping() error {
 }
 
 func (c *Client) do(r *http.Request) (*http.Response, error) {
-	r.Header.Add("USER-AGENT", CLIENT_USER_AGENT)
+	r.Header.Add("USER-AGENT", c.UserAgent)
 	return c.HTTPClient.Do(r)
 }
