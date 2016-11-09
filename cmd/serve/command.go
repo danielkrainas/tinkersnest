@@ -28,7 +28,7 @@ func run(ctx context.Context, args []string) error {
 var (
 	Info = &cmd.Info{
 		Use:   "serve",
-		Short: "`serve`",
+		Short: "run the api server",
 		Long:  "`serve`",
 		Run:   cmd.ExecutorFunc(run),
 	}
