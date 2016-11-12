@@ -19,8 +19,8 @@ func run(ctx context.Context, args []string) error {
 var (
 	Info = &cmd.Info{
 		Use:   "version",
-		Short: "`version`",
-		Long:  "`version`",
+		Short: "show version information",
+		Long:  "show version information",
 		Run:   cmd.ExecutorFunc(run),
 	}
 )
