@@ -63,3 +63,19 @@ func DispatchCommand(ctx context.Context, c Command) error {
 
 	return d.Dispatch(ctx, c)
 }
+
+type RetryHandler struct {
+	Retries int
+	Inner   CommandHandler
+}
+
+func (h *RetryHandler) Handle(ctx context.Context, cmd Command) error {
+	var err error
+	for i := 0; i < h.Retries; i++ {
+		if err = h.Inner.Handle(ctx, cmd); err == nil {
+			break
+		}
+	}
+
+	return err
+}
