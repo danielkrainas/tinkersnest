@@ -29,7 +29,7 @@ var (
 	Info = &cmd.Info{
 		Use:   "serve",
 		Short: "run the api server",
-		Long:  "`serve`",
+		Long:  "run the api server",
 		Run:   cmd.ExecutorFunc(run),
 	}
 )
