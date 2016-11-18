@@ -3,6 +3,7 @@ package cqrs
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/danielkrainas/tinkersnest/context"
 )
@@ -66,6 +67,7 @@ func DispatchCommand(ctx context.Context, c Command) error {
 
 type RetryHandler struct {
 	Retries int
+	Delay   time.Duration
 	Inner   CommandHandler
 }
 
@@ -75,6 +77,8 @@ func (h *RetryHandler) Handle(ctx context.Context, cmd Command) error {
 		if err = h.Inner.Handle(ctx, cmd); err == nil {
 			break
 		}
+
+		time.Sleep(h.Delay)
 	}
 
 	return err
