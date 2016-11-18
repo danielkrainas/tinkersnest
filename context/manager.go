@@ -31,7 +31,7 @@ func (m *Manager) Context(parent Context, w http.ResponseWriter, r *http.Request
 	}
 
 	ctx := WithRequest(parent, r)
-	ctx, w = WithResponseWriter(ctx, w)
+	ctx, _ = WithResponseWriter(ctx, w)
 	ctx = WithLogger(ctx, GetLogger(ctx))
 	m.contexts[r] = ctx
 	return ctx
