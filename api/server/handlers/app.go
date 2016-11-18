@@ -155,7 +155,7 @@ func (app *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		context.GetLogger(ctx).Warnf("response writer not found in context")
 	}
 
-	w.Header().Add("CSENSE-API-VERSION", context.GetVersion(ctx))
+	w.Header().Add("TINKERSNEST-VERSION", context.GetVersion(ctx))
 	app.router.ServeHTTP(w, r)
 }
 
