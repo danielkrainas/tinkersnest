@@ -15,7 +15,6 @@ import (
 	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/cqrs"
 	"github.com/danielkrainas/tinkersnest/storage"
-	storageDriverFactory "github.com/danielkrainas/tinkersnest/storage/factory"
 )
 
 type Server struct {
@@ -36,7 +35,7 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 	log := context.GetLogger(ctx)
 	log.Info("initializing server")
 
-	storageDriver, err := configureStorage(ctx, config)
+	storageDriver, err := storage.FromConfig(config)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +90,7 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 	}
 
 	log.Infof("using %q logging formatter", config.Log.Formatter)
-	log.Infof("using %q storage driver", config.Storage.Type())
+	storage.LogSummary(ctx, config)
 
 	return s, nil
 }
@@ -146,24 +145,6 @@ func loggingHandler(parent context.Context, handler http.Handler) http.Handler {
 		context.GetRequestLogger(ctx).Info("request started")
 		handler.ServeHTTP(w, r)
 	})
-}
-
-func configureStorage(ctx context.Context, config *configuration.Config) (storage.Driver, error) {
-	storageParams := config.Storage.Parameters()
-	if storageParams == nil {
-		storageParams = make(configuration.Parameters)
-	}
-
-	storageDriver, err := storageDriverFactory.Create(config.Storage.Type(), storageParams)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := storageDriver.Init(); err != nil {
-		return nil, err
-	}
-
-	return storageDriver, nil
 }
 
 func configureLogging(ctx context.Context, config *configuration.Config) (context.Context, error) {

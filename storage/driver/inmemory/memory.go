@@ -2,8 +2,8 @@ package inmemory
 
 import (
 	"github.com/danielkrainas/tinkersnest/cqrs"
-	"github.com/danielkrainas/tinkersnest/storage"
-	"github.com/danielkrainas/tinkersnest/storage/factory"
+	storage "github.com/danielkrainas/tinkersnest/storage/driver"
+	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
 )
 
 var (

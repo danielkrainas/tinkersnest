@@ -1,19 +1,26 @@
 package storage
 
 import (
-	"errors"
-
-	"github.com/danielkrainas/tinkersnest/cqrs"
+	"github.com/danielkrainas/tinkersnest/configuration"
+	"github.com/danielkrainas/tinkersnest/context"
+	"github.com/danielkrainas/tinkersnest/storage/driver"
+	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
 )
 
-var (
-	ErrNotSupported = errors.New("the operation is not supported by the driver")
-	ErrNotFound     = errors.New("not found")
-)
+func FromConfig(config *configuration.Config) (driver.Driver, error) {
+	params := config.Storage.Parameters()
+	if params == nil {
+		params = make(configuration.Parameters)
+	}
 
-type Driver interface {
-	Init() error
+	d, err := factory.Create(config.Storage.Type(), params)
+	if err != nil {
+		return nil, err
+	}
 
-	Command() cqrs.CommandHandler
-	Query() cqrs.QueryExecutor
+	return d, nil
+}
+
+func LogSummary(ctx context.Context, config *configuration.Config) {
+	context.GetLogger(ctx).Infof("using %q storage driver", config.Storage.Type())
 }
