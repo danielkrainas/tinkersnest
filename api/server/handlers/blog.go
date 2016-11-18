@@ -21,8 +21,8 @@ func blogListDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	}
 
 	return handlers.MethodHandler{
-		"GET":  http.HandlerFunc(h.GetAllPosts),
-		"POST": http.HandlerFunc(h.CreatePost),
+		"GET":  withLogging("GetAllPosts", h.GetAllPosts),
+		"POST": withLogging("CreatePost", h.CreatePost),
 	}
 }
 
@@ -31,9 +31,6 @@ type blogHandler struct {
 }
 
 func (ctx *blogHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
-	context.GetLogger(ctx).Debug("CreatePost begin")
-	defer context.GetLogger(ctx).Debug("CreatePost end")
-
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		context.GetLogger(ctx).Error(err)
@@ -61,9 +58,6 @@ func (ctx *blogHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ctx *blogHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	context.GetLogger(ctx).Debug("GetAllPosts begin")
-	defer context.GetLogger(ctx).Debug("GetAllPosts end")
-
 	posts, err := cqrs.DispatchQuery(ctx, &queries.SearchPosts{})
 	if err != nil {
 		context.GetLogger(ctx).Error(err)

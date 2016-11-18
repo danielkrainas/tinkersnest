@@ -167,3 +167,12 @@ func apiBase(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, emptyJSON)
 }
+
+func withLogging(name string, h func(http.ResponseWriter, *http.Request)) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.DefaultContextManager.Context(nil, w, r)
+		context.GetLogger(ctx).Debugf("%s begin", name)
+		defer context.GetLogger(ctx).Debugf("%s end", name)
+		h(w, r)
+	})
+}
