@@ -1,10 +1,11 @@
-package context
+package acontext
 
 import (
+	"context"
 	"time"
 )
 
-func GetStringValue(ctx Context, key interface{}) string {
+func GetStringValue(ctx context.Context, key interface{}) string {
 	if value, ok := ctx.Value(key).(string); ok {
 		return value
 	}
@@ -12,7 +13,7 @@ func GetStringValue(ctx Context, key interface{}) string {
 	return ""
 }
 
-func Since(ctx Context, key interface{}) time.Duration {
+func Since(ctx context.Context, key interface{}) time.Duration {
 	if startedAt, ok := ctx.Value(key).(time.Time); ok {
 		return time.Since(startedAt)
 	}
@@ -20,6 +21,6 @@ func Since(ctx Context, key interface{}) time.Duration {
 	return 0
 }
 
-func GetInstanceID(ctx Context) string {
+func GetInstanceID(ctx context.Context) string {
 	return GetStringValue(ctx, "instance.id")
 }

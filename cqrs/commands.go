@@ -1,11 +1,10 @@
 package cqrs
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
-
-	"github.com/danielkrainas/tinkersnest/context"
 )
 
 var ErrNoHandler = errors.New("no command handler")

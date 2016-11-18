@@ -1,20 +1,22 @@
-package context
+package acontext
 
 import (
+	"context"
+
 	"github.com/danielkrainas/tinkersnest/api/errcode"
 )
 
-func WithErrors(ctx Context, errors errcode.Errors) Context {
+func WithErrors(ctx context.Context, errors errcode.Errors) context.Context {
 	return WithValue(ctx, "errors", errors)
 }
 
-func AppendError(ctx Context, err error) Context {
+func AppendError(ctx context.Context, err error) context.Context {
 	errors := GetErrors(ctx)
 	errors = append(errors, err)
 	return WithErrors(ctx, errors)
 }
 
-func GetErrors(ctx Context) errcode.Errors {
+func GetErrors(ctx context.Context) errcode.Errors {
 	if errors, ok := ctx.Value("errors").(errcode.Errors); errors != nil && ok {
 		return errors
 	}

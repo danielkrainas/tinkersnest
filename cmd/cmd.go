@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
+	"context"
 
-	"github.com/danielkrainas/tinkersnest/context"
+	"github.com/spf13/cobra"
 )
 
 type ExecutorFunc func(ctx context.Context, args []string) error

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -79,13 +80,13 @@ func NewApp(ctx context.Context, config *configuration.Config) (*App, error) {
 func (app *App) dispatcher(dispatch dispatchFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := app.context(w, r)
-		ctx.Context = context.WithErrors(ctx.Context, make(errcode.Errors, 0))
+		ctx.Context = acontext.WithErrors(ctx.Context, make(errcode.Errors, 0))
 
 		dispatch(ctx, r).ServeHTTP(w, r)
 
-		if errors := context.GetErrors(ctx); errors.Len() > 0 {
+		if errors := acontext.GetErrors(ctx); errors.Len() > 0 {
 			if err := errcode.ServeJSON(w, errors); err != nil {
-				context.GetLogger(ctx).Errorf("error serving error json: %v (from %s)", err, errors)
+				acontext.GetLogger(ctx).Errorf("error serving error json: %v (from %s)", err, errors)
 			}
 
 			app.logError(ctx, errors)
@@ -100,32 +101,32 @@ func (app *App) logError(ctx context.Context, errors errcode.Errors) {
 		switch err.(type) {
 		case errcode.Error:
 			e, _ := err.(errcode.Error)
-			lctx = context.WithValue(ctx, "err.code", e.Code)
-			lctx = context.WithValue(lctx, "err.message", e.Code.Message())
-			lctx = context.WithValue(lctx, "err.detail", e.Detail)
+			lctx = acontext.WithValue(ctx, "err.code", e.Code)
+			lctx = acontext.WithValue(lctx, "err.message", e.Code.Message())
+			lctx = acontext.WithValue(lctx, "err.detail", e.Detail)
 		case errcode.ErrorCode:
 			e, _ := err.(errcode.ErrorCode)
-			lctx = context.WithValue(ctx, "err.code", e)
-			lctx = context.WithValue(lctx, "err.message", e.Message())
+			lctx = acontext.WithValue(ctx, "err.code", e)
+			lctx = acontext.WithValue(lctx, "err.message", e.Message())
 		default:
 			// normal "error"
-			lctx = context.WithValue(ctx, "err.code", errcode.ErrorCodeUnknown)
-			lctx = context.WithValue(lctx, "err.message", err.Error())
+			lctx = acontext.WithValue(ctx, "err.code", errcode.ErrorCodeUnknown)
+			lctx = acontext.WithValue(lctx, "err.message", err.Error())
 		}
 
-		lctx = context.WithLogger(ctx, context.GetLogger(lctx,
+		lctx = acontext.WithLogger(ctx, acontext.GetLogger(lctx,
 			"err.code",
 			"err.message",
 			"err.detail"))
 
-		context.GetResponseLogger(lctx).Errorf("response completed with error")
+		acontext.GetResponseLogger(lctx).Errorf("response completed with error")
 	}
 }
 
 func (app *App) context(w http.ResponseWriter, r *http.Request) *appRequestContext {
-	ctx := context.DefaultContextManager.Context(app, w, r)
-	ctx = context.WithVars(ctx, r)
-	ctx = context.WithLogger(ctx, context.GetLogger(ctx))
+	ctx := acontext.DefaultContextManager.Context(app, w, r)
+	ctx = acontext.WithVars(ctx, r)
+	ctx = acontext.WithLogger(ctx, acontext.GetLogger(ctx))
 	arc := &appRequestContext{
 		Context: ctx,
 	}
@@ -141,21 +142,21 @@ func (app *App) register(routeName string, dispatch dispatchFunc) {
 func (app *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	ctx := context.DefaultContextManager.Context(app, w, r)
+	ctx := acontext.DefaultContextManager.Context(app, w, r)
 	defer func() {
 		status, ok := ctx.Value("http.response.status").(int)
 		if ok && status >= 200 && status <= 399 {
-			context.GetResponseLogger(ctx).Infof("response completed")
+			acontext.GetResponseLogger(ctx).Infof("response completed")
 		}
 	}()
 
 	var err error
-	w, err = context.GetResponseWriter(ctx)
+	w, err = acontext.GetResponseWriter(ctx)
 	if err != nil {
-		context.GetLogger(ctx).Warnf("response writer not found in context")
+		acontext.GetLogger(ctx).Warnf("response writer not found in context")
 	}
 
-	w.Header().Add("TINKERSNEST-VERSION", context.GetVersion(ctx))
+	w.Header().Add("TINKERSNEST-VERSION", acontext.GetVersion(ctx))
 	app.router.ServeHTTP(w, r)
 }
 
@@ -170,9 +171,9 @@ func apiBase(w http.ResponseWriter, r *http.Request) {
 
 func withLogging(name string, h func(http.ResponseWriter, *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.DefaultContextManager.Context(nil, w, r)
-		context.GetLogger(ctx).Debugf("%s begin", name)
-		defer context.GetLogger(ctx).Debugf("%s end", name)
+		ctx := acontext.DefaultContextManager.Context(nil, w, r)
+		acontext.GetLogger(ctx).Debugf("%s begin", name)
+		defer acontext.GetLogger(ctx).Debugf("%s end", name)
 		h(w, r)
 	})
 }

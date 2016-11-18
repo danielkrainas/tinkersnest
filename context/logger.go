@@ -1,6 +1,7 @@
-package context
+package acontext
 
 import (
+	"context"
 	"fmt"
 	"runtime"
 
@@ -37,15 +38,15 @@ type Logger interface {
 	Warnln(args ...interface{})
 }
 
-func WithLogger(ctx Context, logger Logger) Context {
+func WithLogger(ctx context.Context, logger Logger) context.Context {
 	return WithValue(ctx, "logger", logger)
 }
 
-func GetLoggerWithField(ctx Context, key, value interface{}, keys ...interface{}) Logger {
+func GetLoggerWithField(ctx context.Context, key, value interface{}, keys ...interface{}) Logger {
 	return getLogrusLogger(ctx, keys...).WithField(fmt.Sprint(key), value)
 }
 
-func GetLoggerWithFields(ctx Context, fields map[interface{}]interface{}, keys ...interface{}) Logger {
+func GetLoggerWithFields(ctx context.Context, fields map[interface{}]interface{}, keys ...interface{}) Logger {
 	lfields := make(logrus.Fields, len(fields))
 	for k, v := range fields {
 		lfields[fmt.Sprint(k)] = v
@@ -54,11 +55,11 @@ func GetLoggerWithFields(ctx Context, fields map[interface{}]interface{}, keys .
 	return getLogrusLogger(ctx, keys...).WithFields(lfields)
 }
 
-func GetLogger(ctx Context, keys ...interface{}) Logger {
+func GetLogger(ctx context.Context, keys ...interface{}) Logger {
 	return getLogrusLogger(ctx, keys...)
 }
 
-func getLogrusLogger(ctx Context, keys ...interface{}) *logrus.Entry {
+func getLogrusLogger(ctx context.Context, keys ...interface{}) *logrus.Entry {
 	var logger *logrus.Entry
 
 	loggerInterface := ctx.Value("logger")

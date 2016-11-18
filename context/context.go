@@ -1,4 +1,4 @@
-package context
+package acontext
 
 import (
 	"sync"
@@ -8,12 +8,8 @@ import (
 	"github.com/danielkrainas/tinkersnest/util/uuid"
 )
 
-type Context interface {
-	context.Context
-}
-
 type instancedContext struct {
-	Context
+	context.Context
 	id   string
 	once sync.Once
 }
@@ -34,7 +30,7 @@ var background = &instancedContext{
 	Context: context.Background(),
 }
 
-func Background() Context {
+func Background() context.Context {
 	return background
 }
 
@@ -55,7 +51,7 @@ func WithValues(ctx context.Context, vals map[string]interface{}) context.Contex
 	}
 }
 
-func WithValue(parent Context, key interface{}, val interface{}) Context {
+func WithValue(parent context.Context, key interface{}, val interface{}) context.Context {
 	return context.WithValue(parent, key, val)
 }
 

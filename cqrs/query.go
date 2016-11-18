@@ -1,10 +1,9 @@
 package cqrs
 
 import (
+	"context"
 	"errors"
 	"fmt"
-
-	"github.com/danielkrainas/tinkersnest/context"
 )
 
 var ErrNoExecutor = errors.New("no query executor")

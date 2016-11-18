@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"context"
+
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/storage/driver"
@@ -22,5 +24,5 @@ func FromConfig(config *configuration.Config) (driver.Driver, error) {
 }
 
 func LogSummary(ctx context.Context, config *configuration.Config) {
-	context.GetLogger(ctx).Infof("using %q storage driver", config.Storage.Type())
+	acontext.GetLogger(ctx).Infof("using %q storage driver", config.Storage.Type())
 }

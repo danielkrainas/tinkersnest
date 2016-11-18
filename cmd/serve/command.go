@@ -1,10 +1,11 @@
 package serve
 
 import (
+	"context"
+
 	"github.com/danielkrainas/tinkersnest/api/server"
 	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/configuration"
-	"github.com/danielkrainas/tinkersnest/context"
 )
 
 func init() {

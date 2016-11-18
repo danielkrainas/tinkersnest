@@ -1,12 +1,13 @@
-package context
+package acontext
 
 import (
+	"context"
 	"net/http"
 	"sync"
 )
 
 type Manager struct {
-	contexts map[*http.Request]Context
+	contexts map[*http.Request]context.Context
 	mutex    sync.Mutex
 }
 
@@ -14,11 +15,11 @@ var DefaultContextManager = NewManager()
 
 func NewManager() *Manager {
 	return &Manager{
-		contexts: make(map[*http.Request]Context),
+		contexts: make(map[*http.Request]context.Context),
 	}
 }
 
-func (m *Manager) Context(parent Context, w http.ResponseWriter, r *http.Request) Context {
+func (m *Manager) Context(parent context.Context, w http.ResponseWriter, r *http.Request) context.Context {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -37,7 +38,7 @@ func (m *Manager) Context(parent Context, w http.ResponseWriter, r *http.Request
 	return ctx
 }
 
-func (m *Manager) Release(ctx Context) {
+func (m *Manager) Release(ctx context.Context) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 

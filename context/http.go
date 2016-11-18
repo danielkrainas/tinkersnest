@@ -1,6 +1,7 @@
-package context
+package acontext
 
 import (
+	"context"
 	"errors"
 	"net"
 	"net/http"
@@ -21,7 +22,7 @@ var (
 )
 
 type httpRequestContext struct {
-	Context
+	context.Context
 	startedAt time.Time
 	id        string
 	r         *http.Request
@@ -65,7 +66,7 @@ func RemoteIP(r *http.Request) string {
 	return addr
 }
 
-func WithRequest(ctx Context, r *http.Request) Context {
+func WithRequest(ctx context.Context, r *http.Request) context.Context {
 	if ctx.Value("http.request") != nil {
 		panic("only one request per context")
 	}
@@ -78,7 +79,7 @@ func WithRequest(ctx Context, r *http.Request) Context {
 	}
 }
 
-func GetRequest(ctx Context) (*http.Request, error) {
+func GetRequest(ctx context.Context) (*http.Request, error) {
 	if r, ok := ctx.Value("http.request").(*http.Request); r != nil && ok {
 		return r, nil
 	}
@@ -86,7 +87,7 @@ func GetRequest(ctx Context) (*http.Request, error) {
 	return nil, ErrNoRequestContext
 }
 
-func GetRequestID(ctx Context) string {
+func GetRequestID(ctx context.Context) string {
 	return GetStringValue(ctx, "http.request.id")
 }
 
@@ -152,11 +153,11 @@ func (ctx *httpRequestContext) Value(key interface{}) interface{} {
 }
 
 type muxVarsContext struct {
-	Context
+	context.Context
 	vars map[string]string
 }
 
-func WithVars(ctx Context, r *http.Request) Context {
+func WithVars(ctx context.Context, r *http.Request) context.Context {
 	return &muxVarsContext{
 		Context: ctx,
 		vars:    mux.Vars(r),
@@ -181,14 +182,14 @@ func (ctx *muxVarsContext) Value(key interface{}) interface{} {
 	return ctx.Context.Value(key)
 }
 
-func GetRequestQueryParameters(ctx Context) url.Values {
+func GetRequestQueryParameters(ctx context.Context) url.Values {
 	if qv, ok := ctx.Value("http.request.query").(url.Values); ok {
 		return qv
 	}
 	return url.Values{}
 }
 
-func GetRequestLogger(ctx Context) Logger {
+func GetRequestLogger(ctx context.Context) Logger {
 	return GetLogger(ctx,
 		"http.request.id",
 		"http.request.method",
@@ -200,7 +201,7 @@ func GetRequestLogger(ctx Context) Logger {
 		"http.request.contenttype")
 }
 
-func GetResponseLogger(ctx Context) Logger {
+func GetResponseLogger(ctx context.Context) Logger {
 	l := getLogrusLogger(ctx,
 		"http.response.written",
 		"http.response.status",
@@ -214,7 +215,7 @@ func GetResponseLogger(ctx Context) Logger {
 	return l
 }
 
-func GetResponseWriter(ctx Context) (http.ResponseWriter, error) {
+func GetResponseWriter(ctx context.Context) (http.ResponseWriter, error) {
 	v := ctx.Value("http.response")
 
 	w, ok := v.(http.ResponseWriter)
@@ -225,7 +226,7 @@ func GetResponseWriter(ctx Context) (http.ResponseWriter, error) {
 	return w, nil
 }
 
-func WithResponseWriter(ctx Context, w http.ResponseWriter) (Context, http.ResponseWriter) {
+func WithResponseWriter(ctx context.Context, w http.ResponseWriter) (context.Context, http.ResponseWriter) {
 	if closeNotifier, ok := w.(http.CloseNotifier); ok {
 		iwcn := &instrumentedResponseWriterCloseNotify{
 			instrumentedResponseWriter: instrumentedResponseWriter{
@@ -252,7 +253,7 @@ type instrumentedResponseWriterCloseNotify struct {
 
 type instrumentedResponseWriter struct {
 	http.ResponseWriter
-	Context
+	context.Context
 
 	mutex   sync.Mutex
 	status  int

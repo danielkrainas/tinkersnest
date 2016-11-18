@@ -1,11 +1,11 @@
 package inmemory
 
 import (
+	"context"
 	"sync"
 	"time"
 
 	"github.com/danielkrainas/tinkersnest/api/v1"
-	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/cqrs"
 	"github.com/danielkrainas/tinkersnest/cqrs/commands"
 	"github.com/danielkrainas/tinkersnest/cqrs/queries"
