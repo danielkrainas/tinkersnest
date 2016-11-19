@@ -11,7 +11,7 @@ import (
 
 type BlogAPI interface {
 	SearchPosts() ([]*v1.Post, error)
-	CreatePost(create *v1.CreatePostRequest) (*v1.Post, error)
+	CreatePost(post *v1.Post) (*v1.Post, error)
 }
 
 type blogAPI struct {
@@ -53,8 +53,8 @@ func (api *blogAPI) SearchPosts() ([]*v1.Post, error) {
 	return p, nil
 }
 
-func (api *blogAPI) CreatePost(create *v1.CreatePostRequest) (*v1.Post, error) {
-	body, err := json.Marshal(&create)
+func (api *blogAPI) CreatePost(post *v1.Post) (*v1.Post, error) {
+	body, err := json.Marshal(&post)
 	if err != nil {
 		return nil, err
 	}
