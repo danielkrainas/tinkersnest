@@ -70,7 +70,7 @@ var (
 )
 
 func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
-	m, ok := spec["post"].(map[string]interface{})
+	m, ok := spec["post"].(map[interface{}]interface{})
 	if !ok {
 		return nil, errors.New("missing 'post' data in spec")
 	}
@@ -78,9 +78,12 @@ func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
 	p := &v1.Post{
 		Name:    name,
 		Title:   m["title"].(string),
-		Created: m["created"].(int64),
 		Publish: false,
 		Content: make([]*v1.Content, 0),
+	}
+
+	if created, ok := m["created"].(int64); ok {
+		p.Created = created
 	}
 
 	if publish, ok := m["publish"].(bool); ok {
