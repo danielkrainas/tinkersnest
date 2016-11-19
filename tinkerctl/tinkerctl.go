@@ -6,6 +6,7 @@ import (
 	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/context"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/create"
+	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/get"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/ping"
 	"github.com/danielkrainas/tinkersnest/tinkerctl/cmd/root"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/version"
