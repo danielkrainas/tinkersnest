@@ -1,6 +1,7 @@
 package version
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/danielkrainas/tinkersnest/cmd"
@@ -12,7 +13,7 @@ func init() {
 }
 
 func run(ctx context.Context, args []string) error {
-	fmt.Println("Tinkerctl v" + context.GetVersion(ctx))
+	fmt.Println("Tinkerctl v" + acontext.GetVersion(ctx))
 	return nil
 }
 

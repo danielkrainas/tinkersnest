@@ -1,12 +1,12 @@
 package ping
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/danielkrainas/tinkersnest/api/client"
 	"github.com/danielkrainas/tinkersnest/cmd"
-	"github.com/danielkrainas/tinkersnest/context"
 )
 
 func init() {

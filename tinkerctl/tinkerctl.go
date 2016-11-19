@@ -20,7 +20,7 @@ func main() {
 		appVersion = DEFAULT_VERSION
 	}
 
-	ctx := context.WithVersion(context.Background(), appVersion)
+	ctx := acontext.WithVersion(acontext.Background(), appVersion)
 
 	dispatch := cmd.CreateDispatcher(ctx, root.Info)
 	if err := dispatch(); err != nil {
