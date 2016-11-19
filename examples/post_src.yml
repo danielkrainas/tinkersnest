@@ -7,4 +7,4 @@ spec:
     title: 'Post With Source File'
     content:
       - type: markdown
-        src: post_file.md
+        file: post_file.md
