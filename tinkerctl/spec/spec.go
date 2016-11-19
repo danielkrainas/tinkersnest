@@ -7,14 +7,14 @@ import (
 
 type Spec struct {
 	Name string                 `yaml:"name"`
-	Type ItemType               `yaml:"type"`
+	Type ResourceType           `yaml:"type"`
 	Spec map[string]interface{} `yaml:"spec"`
 }
 
-type ItemType string
+type ResourceType string
 
 var (
-	Post ItemType = "Post"
+	Post ResourceType = "Post"
 )
 
 func Load(specPath string) (*Spec, error) {
