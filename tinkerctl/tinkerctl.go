@@ -5,8 +5,8 @@ import (
 
 	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/context"
+	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/create"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/ping"
-	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/post"
 	"github.com/danielkrainas/tinkersnest/tinkerctl/cmd/root"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/version"
 )
