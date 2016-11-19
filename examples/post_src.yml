@@ -1,0 +1,7 @@
+version: 1.0
+name: test-post
+type: Post
+post:
+  content:
+    type: markdown
+    src: post_file.md
