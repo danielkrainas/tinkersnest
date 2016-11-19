@@ -10,7 +10,6 @@ import (
 	"github.com/danielkrainas/tinkersnest/cqrs/commands"
 	"github.com/danielkrainas/tinkersnest/cqrs/queries"
 	"github.com/danielkrainas/tinkersnest/util/slugify"
-	"github.com/danielkrainas/tinkersnest/util/uuid"
 )
 
 var blog *postStore
@@ -55,13 +54,12 @@ func (s *postStore) SearchPosts(ctx context.Context, q *queries.SearchPosts) (in
 
 func (s *postStore) StorePost(ctx context.Context, c *commands.StorePost) error {
 	p := c.Post
-	if c.New || p.ID == "" {
-		p.ID = uuid.Generate()
+	if c.New {
 		p.Created = time.Now().Unix()
 	}
 
-	if p.Slug == "" {
-		p.Slug = slugify.Marshal(p.Title)
+	if p.Name == "" {
+		p.Name = slugify.Marshal(p.Title)
 	}
 
 	s.m.Lock()
@@ -70,7 +68,7 @@ func (s *postStore) StorePost(ctx context.Context, c *commands.StorePost) error 
 	found := false
 	if !c.New {
 		for i, p2 := range s.posts {
-			if p2.ID == p.ID {
+			if p2.Name == p.Name {
 				s.posts[i] = p
 				found = true
 				break
