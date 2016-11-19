@@ -10,7 +10,7 @@ import (
 	"github.com/danielkrainas/tinkersnest/api/client"
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/cmd"
-	"github.com/danielkrainas/tinkersnest/tinkerctl/spec"
+	"github.com/danielkrainas/tinkersnest/tinkerctl/resource"
 )
 
 func init() {
@@ -18,12 +18,12 @@ func init() {
 }
 
 func run(ctx context.Context, args []string) error {
-	specPath, ok := ctx.Value("flags.file").(string)
+	resourcePath, ok := ctx.Value("flags.file").(string)
 	if !ok {
-		return errors.New("an object spec file path is required")
+		return errors.New("a resource file path is required")
 	}
 
-	res, err := spec.Load(specPath)
+	res, err := resource.Load(resourcePath)
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func run(ctx context.Context, args []string) error {
 	c := client.New(ENDPOINT, http.DefaultClient)
 
 	switch res.Type {
-	case spec.Post:
+	case resource.Post:
 		post, err := postFromSpec(res.Name, res.Spec)
 		if err != nil {
 			return err
@@ -62,17 +62,17 @@ var (
 			{
 				Short:       "f",
 				Long:        "file",
-				Description: "resource meta file",
+				Description: "resource spec file",
 				Type:        cmd.FlagString,
 			},
 		},
 	}
 )
 
-func postFromSpec(name string, meta map[string]interface{}) (*v1.Post, error) {
-	m, ok := meta["post"].(map[interface{}]interface{})
+func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
+	m, ok := spec["post"].(map[interface{}]interface{})
 	if !ok {
-		return nil, errors.New("missing 'post' data in metadata")
+		return nil, errors.New("missing 'post' data in spec")
 	}
 
 	p := &v1.Post{
@@ -92,7 +92,7 @@ func postFromSpec(name string, meta map[string]interface{}) (*v1.Post, error) {
 
 	contents, ok := m["content"].([]interface{})
 	if !ok {
-		return nil, errors.New("missing 'content' in post metadata")
+		return nil, errors.New("missing 'content' in post spec")
 	}
 
 	for _, c := range contents {
@@ -109,17 +109,17 @@ func postFromSpec(name string, meta map[string]interface{}) (*v1.Post, error) {
 	return p, nil
 }
 
-func getContent(meta map[string]interface{}) (*v1.Content, error) {
+func getContent(spec map[string]interface{}) (*v1.Content, error) {
 	c := &v1.Content{}
-	if t, ok := meta["type"].(string); !ok {
-		return nil, errors.New("invalid or missing content 'type' in metadata")
+	if t, ok := spec["type"].(string); !ok {
+		return nil, errors.New("invalid or missing content 'type' in spec")
 	} else {
 		c.Type = t
 	}
 
-	if sdata, ok := meta["data"].(string); ok {
+	if sdata, ok := spec["data"].(string); ok {
 		c.Data = []byte(sdata)
-	} else if src, ok := meta["src"].(string); ok {
+	} else if src, ok := spec["src"].(string); ok {
 		data, err := ioutil.ReadFile(src)
 		if err != nil {
 			return nil, err
