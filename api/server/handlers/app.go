@@ -169,7 +169,7 @@ func apiBase(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, emptyJSON)
 }
 
-func withLogging(name string, h func(http.ResponseWriter, *http.Request)) http.Handler {
+func withTraceLogging(name string, h func(http.ResponseWriter, *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := acontext.DefaultContextManager.Context(nil, w, r)
 		acontext.GetLogger(ctx).Debugf("%s begin", name)
