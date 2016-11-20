@@ -12,6 +12,7 @@ import (
 type BlogAPI interface {
 	SearchPosts() ([]*v1.Post, error)
 	CreatePost(post *v1.Post) (*v1.Post, error)
+	GetPost(name string) (*v1.Post, error)
 }
 
 type blogAPI struct {
