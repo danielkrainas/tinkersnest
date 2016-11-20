@@ -5,6 +5,12 @@ import (
 	"net/http"
 )
 
+type ResourceGrant struct {
+	Code         string `json:"code"`
+	ResourceType string `json:"resource_type"`
+	Created      int64  `json:"created"`
+}
+
 func ServeJSON(w http.ResponseWriter, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
