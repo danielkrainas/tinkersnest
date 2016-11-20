@@ -8,3 +8,8 @@ type StorePost struct {
 	New  bool
 	Post *v1.Post
 }
+
+type StoreGrant struct {
+	New   bool
+	Grant *v1.Grant
+}

@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type ResourceGrant struct {
+type Grant struct {
 	Code         string `json:"code"`
 	ResourceType string `json:"resource_type"`
 	Created      int64  `json:"created"`
