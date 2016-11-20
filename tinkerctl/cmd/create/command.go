@@ -96,7 +96,7 @@ func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
 	}
 
 	for _, c := range contents {
-		if cm, ok := c.(map[string]interface{}); ok {
+		if cm, ok := c.(map[interface{}]interface{}); ok {
 			c, err := getContent(cm)
 			if err != nil {
 				return nil, err
@@ -109,7 +109,7 @@ func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
 	return p, nil
 }
 
-func getContent(spec map[string]interface{}) (*v1.Content, error) {
+func getContent(spec map[interface{}]interface{}) (*v1.Content, error) {
 	c := &v1.Content{}
 	if t, ok := spec["type"].(string); !ok {
 		return nil, errors.New("invalid or missing content 'type' in spec")
