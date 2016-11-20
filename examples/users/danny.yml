@@ -1,0 +1,9 @@
+# create with `tinkerctl create -f examples/users/danny.yml`
+version: 1.0
+name: danny
+type: User
+spec:
+  user:
+    email: 'me@danielkrainas.com'
+    full_name: 'Danny Krainas'
+    
