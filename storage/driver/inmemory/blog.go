@@ -21,6 +21,7 @@ func init() {
 
 	registerCommand(&commands.StorePost{}, blog)
 	registerQuery(&queries.SearchPosts{}, blog)
+	registerQuery(&queries.FindPost{}, blog)
 }
 
 type postStore struct {
@@ -32,6 +33,9 @@ func (s *postStore) Execute(ctx context.Context, q cqrs.Query) (interface{}, err
 	switch q := q.(type) {
 	case *queries.SearchPosts:
 		return s.SearchPosts(ctx, q)
+
+	case *queries.FindPost:
+		return s.FindPost(ctx, q)
 	}
 
 	return nil, cqrs.ErrNoExecutor
@@ -50,6 +54,18 @@ func (s *postStore) SearchPosts(ctx context.Context, q *queries.SearchPosts) (in
 	s.m.Lock()
 	defer s.m.Unlock()
 	return s.posts[:], nil
+}
+
+func (s *postStore) FindPost(ctx context.Context, q *queries.FindPost) (interface{}, error) {
+	s.m.Lock()
+	defer s.m.Unlock()
+	for _, p := range s.posts {
+		if p.Name == q.Name {
+			return p, nil
+		}
+	}
+
+	return nil, nil
 }
 
 func (s *postStore) StorePost(ctx context.Context, c *commands.StorePost) error {

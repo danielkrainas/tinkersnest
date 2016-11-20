@@ -91,6 +91,16 @@ func (ub *URLBuilder) BuildBlog() (string, error) {
 	return routeUrl.String(), nil
 }
 
+func (ub *URLBuilder) BuildPostByName(name string) (string, error) {
+	route := ub.cloneRoute(RouteNamePostByName)
+	postUrl, err := route.URL("post_name", name)
+	if err != nil {
+		return "", err
+	}
+
+	return postUrl.String(), nil
+}
+
 type clonedRoute struct {
 	*mux.Route
 

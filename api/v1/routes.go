@@ -3,8 +3,9 @@ package v1
 import "github.com/gorilla/mux"
 
 const (
-	RouteNameBase = "base"
-	RouteNameBlog = "blog"
+	RouteNameBase       = "base"
+	RouteNameBlog       = "blog"
+	RouteNamePostByName = "post-by-name"
 )
 
 func Router() *mux.Router {

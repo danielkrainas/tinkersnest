@@ -22,6 +22,37 @@ func (c *Client) Blog() BlogAPI {
 	return &blogAPI{c}
 }
 
+func (api *blogAPI) GetPost(name string) (*v1.Post, error) {
+	url, err := api.urls().BuildPostByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := api.do(r)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	p := &v1.Post{}
+	if err = json.Unmarshal(body, &p); err != nil {
+		return nil, err
+	}
+
+	return p, nil
+}
+
 func (api *blogAPI) SearchPosts() ([]*v1.Post, error) {
 	url, err := api.urls().BuildBlog()
 	if err != nil {

@@ -74,6 +74,7 @@ func NewApp(ctx context.Context, config *configuration.Config) (*App, error) {
 	})
 
 	app.register(v1.RouteNameBlog, blogListDispatcher)
+	app.register(v1.RouteNamePostByName, postByNameDispatcher)
 	return app, nil
 }
 

@@ -12,7 +12,7 @@ var (
 	IDRegex = regexp.MustCompile(`(?i)[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}`)
 
 	versionHeader = describe.Parameter{
-		Name:        "TinkersNest-API-Version",
+		Name:        "TinkersNest-Version",
 		Type:        "string",
 		Description: "The build version of the TinkersNest API server.",
 		Format:      "<version>",
@@ -27,10 +27,10 @@ var (
 		Examples:    []string{"api.tinkersnest.io"},
 	}
 
-	hookIDParameter = describe.Parameter{
-		Name:        "hook_id",
+	postNameParameter = describe.Parameter{
+		Name:        "post_name",
 		Type:        "string",
-		Description: "Identifier for organization",
+		Description: "Identifier for a post",
 		Format:      IDRegex.String(),
 		Required:    true,
 	}
@@ -49,10 +49,10 @@ var (
 		Format:      "0",
 	}
 
-	hookNotFoundResp = describe.Response{
-		Name:        "Hook Unknown Error",
+	resourceNotFoundResp = describe.Response{
+		Name:        "Resource Unknown Error",
 		StatusCode:  http.StatusNotFound,
-		Description: "The hook is not known to the server.",
+		Description: "The resource is not known to the server.",
 		Headers: []describe.Parameter{
 			versionHeader,
 			jsonContentLengthHeader,
@@ -62,7 +62,7 @@ var (
 			Format:      errorsBody,
 		},
 		ErrorCodes: []errcode.ErrorCode{
-			ErrorCodeHookUnknown,
+			ErrorCodeResourceUnknown,
 		},
 	}
 )
@@ -80,10 +80,11 @@ var (
 }`
 
 	blogPostBody = `{
-	"id": ...,
+	"name": ...,
 	"created": <epoch seconds>,
+	"publish": true|false,
 	"title": ...,
-	"body": ...
+	"content": ...
 }`
 
 	blogPostListBody = `[
@@ -139,10 +140,49 @@ var routeDescriptors = []describe.Route{
 		},
 	},
 	{
+		Name:        RouteNamePostByName,
+		Path:        "/v1/blog/posts/{post_name}",
+		Entity:      "Post",
+		Description: "Route to retrieve, update, and delete a single post by name.",
+		Methods: []describe.Method{
+			{
+				Method:      "GET",
+				Description: "Get all posts",
+				Requests: []describe.Request{
+					{
+						Headers: []describe.Parameter{
+							hostHeader,
+						},
+
+						PathParameters: []describe.Parameter{
+							postNameParameter,
+						},
+
+						Successes: []describe.Response{
+							{
+								Description: "post returned",
+								StatusCode:  http.StatusOK,
+								Headers: []describe.Parameter{
+									versionHeader,
+									jsonContentLengthHeader,
+								},
+
+								Body: describe.Body{
+									ContentType: "application/json; charset=utf-8",
+									Format:      blogPostBody,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
 		Name:        RouteNameBlog,
 		Path:        "/v1/blog/posts",
-		Entity:      "[]Hook",
-		Description: "Route to retrieve the list of active hooks and create new ones.",
+		Entity:      "[]Post",
+		Description: "Route to retrieve the list of posts and create new ones.",
 		Methods: []describe.Method{
 			{
 				Method:      "GET",
@@ -178,10 +218,6 @@ var routeDescriptors = []describe.Route{
 					{
 						Headers: []describe.Parameter{
 							hostHeader,
-						},
-
-						PathParameters: []describe.Parameter{
-							hookIDParameter,
 						},
 
 						Successes: []describe.Response{
