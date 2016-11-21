@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/satori/go.uuid"
-
-	"github.com/danielkrainas/tinkersnest/util/uuid"
 )
 
 func Generate(seed string) string {

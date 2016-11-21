@@ -20,6 +20,7 @@ func init() {
 
 	registerCommand(&commands.StoreUser{}, users)
 	registerQuery(&queries.FindUser{}, users)
+	registerQuery(&queries.CountUsers{}, users)
 }
 
 type userStore struct {
@@ -31,6 +32,8 @@ func (s *userStore) Execute(ctx context.Context, q cqrs.Query) (interface{}, err
 	switch q := q.(type) {
 	case *queries.FindUser:
 		return s.FindUser(ctx, q)
+	case *queries.CountUsers:
+		return s.CountUsers(ctx, q)
 	}
 
 	return nil, cqrs.ErrNoExecutor
@@ -43,6 +46,12 @@ func (s *userStore) Handle(ctx context.Context, c cqrs.Command) error {
 	}
 
 	return cqrs.ErrNoHandler
+}
+
+func (s *userStore) CountUsers(ctx context.Context, q *queries.CountUsers) (interface{}, error) {
+	s.m.Lock()
+	defer s.m.Unlock()
+	return len(s.users), nil
 }
 
 func (s *userStore) FindUser(ctx context.Context, q *queries.FindUser) (interface{}, error) {

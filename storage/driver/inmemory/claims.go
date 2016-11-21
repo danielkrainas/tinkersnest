@@ -79,9 +79,10 @@ func (s *claimStore) RedeemClaim(ctx context.Context, c *commands.RedeemClaim) e
 func (s *claimStore) FindClaim(ctx context.Context, q *queries.FindClaim) (interface{}, error) {
 	s.m.Lock()
 	defer s.m.Unlock()
-	for _, p := range s.claims {
-		if p.Code == q.Code {
-			return p, nil
+
+	for _, c := range s.claims {
+		if c.Code == q.Code {
+			return c, nil
 		}
 	}
 

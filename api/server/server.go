@@ -15,6 +15,7 @@ import (
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/cqrs"
+	"github.com/danielkrainas/tinkersnest/setup"
 	"github.com/danielkrainas/tinkersnest/storage"
 )
 
@@ -25,6 +26,7 @@ type Server struct {
 	server  *http.Server
 	query   *cqrs.QueryDispatcher
 	command *cqrs.CommandDispatcher
+	setup   *setup.SetupManager
 }
 
 func New(ctx context.Context, config *configuration.Config) (*Server, error) {
@@ -36,6 +38,8 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 	log := acontext.GetLogger(ctx)
 	log.Info("initializing server")
 
+	setupManager := &setup.SetupManager{}
+
 	storageDriver, err := storage.FromConfig(config)
 	if err != nil {
 		return nil, err
@@ -43,12 +47,14 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 
 	query := &cqrs.QueryDispatcher{
 		Executors: []cqrs.QueryExecutor{
+			setupManager,
 			storageDriver.Query(),
 		},
 	}
 
 	command := &cqrs.CommandDispatcher{
 		Handlers: []cqrs.CommandHandler{
+			setupManager,
 			storageDriver.Command(),
 		},
 	}
@@ -84,6 +90,7 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 		config:  config,
 		query:   query,
 		command: command,
+		setup:   setupManager,
 		server: &http.Server{
 			Addr:    config.HTTP.Addr,
 			Handler: n,
@@ -92,6 +99,10 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 
 	log.Infof("using %q logging formatter", config.Log.Formatter)
 	storage.LogSummary(ctx, config)
+
+	if err := setupManager.Bootstrap(ctx); err != nil {
+		return nil, err
+	}
 
 	return s, nil
 }

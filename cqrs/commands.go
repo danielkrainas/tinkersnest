@@ -16,6 +16,18 @@ type CommandHandler interface {
 	Handle(ctx context.Context, cmd Command) error
 }
 
+type commandHandler struct {
+	f func(context.Context, Command) error
+}
+
+func (h *commandHandler) Handle(ctx context.Context, cmd Command) error {
+	return h.f(ctx, cmd)
+}
+
+func CommandFunc(f func(context.Context, Command) error) CommandHandler {
+	return &commandHandler{f}
+}
+
 type CommandDispatcher struct {
 	Handlers []CommandHandler
 }
