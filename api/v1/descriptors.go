@@ -31,7 +31,13 @@ var (
 		Name:        "post_name",
 		Type:        "string",
 		Description: "Identifier for a post",
-		Format:      IDRegex.String(),
+		Required:    true,
+	}
+
+	userNameParameter = describe.Parameter{
+		Name:        "user_name",
+		Type:        "string",
+		Description: "Identifier for a user",
 		Required:    true,
 	}
 
@@ -89,6 +95,16 @@ var (
 
 	blogPostListBody = `[
 ` + blogPostBody + `, ...
+]`
+
+	userBody = `{
+	"name": ...,
+	"full_name": "John Doe",
+	"email": "j.doe@example.org"
+}`
+
+	userListBody = `[
+` + userBody + `, ...
 ]`
 )
 
@@ -232,6 +248,110 @@ var routeDescriptors = []describe.Route{
 								Body: describe.Body{
 									ContentType: "application/json; charset=utf-8",
 									Format:      blogPostBody,
+								},
+							},
+						},
+
+						Failures: []describe.Response{},
+					},
+				},
+			},
+		},
+	},
+
+	{
+		Name:        RouteNameUserByName,
+		Path:        "/v1/users/{user_name}",
+		Entity:      "User",
+		Description: "Route to retrieve, update, and delete a single post by name.",
+		Methods: []describe.Method{
+			{
+				Method:      "GET",
+				Description: "Get all posts",
+				Requests: []describe.Request{
+					{
+						Headers: []describe.Parameter{
+							hostHeader,
+						},
+
+						PathParameters: []describe.Parameter{
+							userNameParameter,
+						},
+
+						Successes: []describe.Response{
+							{
+								Description: "post returned",
+								StatusCode:  http.StatusOK,
+								Headers: []describe.Parameter{
+									versionHeader,
+									jsonContentLengthHeader,
+								},
+
+								Body: describe.Body{
+									ContentType: "application/json; charset=utf-8",
+									Format:      blogPostBody,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		Name:        RouteNameUserRegistry,
+		Path:        "/v1/users",
+		Entity:      "[]User",
+		Description: "Route to retrieve the list of users and create new ones.",
+		Methods: []describe.Method{
+			{
+				Method:      "GET",
+				Description: "Get all users",
+				Requests: []describe.Request{
+					{
+						Headers: []describe.Parameter{
+							hostHeader,
+						},
+
+						Successes: []describe.Response{
+							{
+								Description: "All users returned",
+								StatusCode:  http.StatusOK,
+								Headers: []describe.Parameter{
+									versionHeader,
+									jsonContentLengthHeader,
+								},
+
+								Body: describe.Body{
+									ContentType: "application/json; charset=utf-8",
+									Format:      userListBody,
+								},
+							},
+						},
+					},
+				},
+			},
+			{
+				Method:      "PUT",
+				Description: "Create a user",
+				Requests: []describe.Request{
+					{
+						Headers: []describe.Parameter{
+							hostHeader,
+						},
+
+						Successes: []describe.Response{
+							{
+								Description: "User created",
+								StatusCode:  http.StatusCreated,
+								Headers: []describe.Parameter{
+									versionHeader,
+									jsonContentLengthHeader,
+								},
+
+								Body: describe.Body{
+									ContentType: "application/json; charset=utf-8",
+									Format:      userBody,
 								},
 							},
 						},

@@ -8,8 +8,6 @@ type FindPost struct {
 	Name string
 }
 
-type SearchGrants struct{}
-
 type FindGrant struct {
 	Code string
 }
@@ -23,3 +21,5 @@ type FindClaim struct {
 type FindUser struct {
 	Name string
 }
+
+type SearchUsers struct{}

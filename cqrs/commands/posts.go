@@ -19,5 +19,6 @@ type RedeemClaim struct {
 }
 
 type StoreUser struct {
+	New  bool
 	User *v1.User
 }
