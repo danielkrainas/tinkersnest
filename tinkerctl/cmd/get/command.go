@@ -24,6 +24,19 @@ func run(ctx context.Context, args []string) error {
 	c := client.New(ENDPOINT, http.DefaultClient)
 
 	switch args[0] {
+	case "users":
+		users, err := c.Users().SearchUsers()
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("%15s | %-20s | %-20s\n", "NAME", "FULL NAME", "EMAIL")
+		for _, user := range users {
+			fmt.Printf("%15s | %-20s | %-20s\n", user.Name, user.FullName, user.Email)
+		}
+
+		fmt.Println("")
+
 	case "posts":
 		posts, err := c.Blog().SearchPosts()
 		if err != nil {

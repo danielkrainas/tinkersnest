@@ -15,6 +15,7 @@ type ResourceType string
 
 var (
 	Post ResourceType = "Post"
+	User ResourceType = "User"
 )
 
 func Load(resourcePath string) (*Resource, error) {

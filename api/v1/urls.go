@@ -80,6 +80,27 @@ func (ub *URLBuilder) BuildBaseURL() (string, error) {
 	return baseURL.String(), nil
 }
 
+func (ub *URLBuilder) BuildUserRegistry() (string, error) {
+	route := ub.cloneRoute(RouteNameUserRegistry)
+
+	routeUrl, err := route.URL()
+	if err != nil {
+		return "", err
+	}
+
+	return routeUrl.String(), nil
+}
+
+func (ub *URLBuilder) BuildUserByName(name string) (string, error) {
+	route := ub.cloneRoute(RouteNameUserByName)
+	routeUrl, err := route.URL("user_name", name)
+	if err != nil {
+		return "", err
+	}
+
+	return routeUrl.String(), nil
+}
+
 func (ub *URLBuilder) BuildBlog() (string, error) {
 	route := ub.cloneRoute(RouteNameBlog)
 
@@ -93,12 +114,12 @@ func (ub *URLBuilder) BuildBlog() (string, error) {
 
 func (ub *URLBuilder) BuildPostByName(name string) (string, error) {
 	route := ub.cloneRoute(RouteNamePostByName)
-	postUrl, err := route.URL("post_name", name)
+	routeUrl, err := route.URL("post_name", name)
 	if err != nil {
 		return "", err
 	}
 
-	return postUrl.String(), nil
+	return routeUrl.String(), nil
 }
 
 type clonedRoute struct {

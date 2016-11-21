@@ -18,6 +18,7 @@ func init() {
 }
 
 func run(ctx context.Context, args []string) error {
+	claimCode, _ := ctx.Value("flags.claim").(string)
 	resourcePath, ok := ctx.Value("flags.file").(string)
 	if !ok {
 		return errors.New("a resource file path is required")
@@ -45,6 +46,24 @@ func run(ctx context.Context, args []string) error {
 
 		fmt.Printf("post %q was created!\n", res.Name)
 
+	case resource.User:
+		user, err := userFromSpec(res.Name, res.Spec)
+		if err != nil {
+			return err
+		}
+
+		if claimCode == "" {
+			user, err = c.Users().CreateUser(user)
+		} else {
+			user, err = c.Users().CreateUserWithClaim(user, claimCode)
+		}
+
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("user %q was created!\n", res.Name)
+
 	default:
 		return fmt.Errorf("resource type %q unsupported", res.Type)
 	}
@@ -65,9 +84,30 @@ var (
 				Description: "resource spec file",
 				Type:        cmd.FlagString,
 			},
+			{
+				Short:       "c",
+				Long:        "claim",
+				Description: "claim code to redeem when creating a resource",
+				Type:        cmd.FlagString,
+			},
 		},
 	}
 )
+
+func userFromSpec(name string, spec map[string]interface{}) (*v1.User, error) {
+	m, ok := spec["user"].(map[interface{}]interface{})
+	if !ok {
+		return nil, errors.New("missing 'user' data in spec")
+	}
+
+	u := &v1.User{
+		Name:     name,
+		Email:    m["email"].(string),
+		FullName: m["full_name"].(string),
+	}
+
+	return u, nil
+}
 
 func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
 	m, ok := spec["post"].(map[interface{}]interface{})
