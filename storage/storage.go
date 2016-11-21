@@ -2,11 +2,16 @@ package storage
 
 import (
 	"context"
+	"errors"
 
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/storage/driver"
 	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
+)
+
+var (
+	ErrNotFound = errors.New("not found")
 )
 
 func FromConfig(config *configuration.Config) (driver.Driver, error) {

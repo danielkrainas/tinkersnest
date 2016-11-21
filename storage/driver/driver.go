@@ -8,7 +8,6 @@ import (
 
 var (
 	ErrNotSupported = errors.New("the operation is not supported by the driver")
-	ErrNotFound     = errors.New("not found")
 )
 
 type Driver interface {

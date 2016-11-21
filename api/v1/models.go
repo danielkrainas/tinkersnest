@@ -5,10 +5,18 @@ import (
 	"net/http"
 )
 
-type Grant struct {
-	Code         string `json:"code"`
-	ResourceType string `json:"resource_type"`
-	Created      int64  `json:"created"`
+type ResourceType string
+
+var (
+	PostResource ResourceType = "post"
+	UserResource ResourceType = "user"
+)
+
+type Claim struct {
+	Code         string       `json:"code"`
+	ResourceType ResourceType `json:"resource_type"`
+	Created      int64        `json:"created"`
+	Redeemed     int64        `json:"redeemed"`
 }
 
 func ServeJSON(w http.ResponseWriter, data interface{}) error {

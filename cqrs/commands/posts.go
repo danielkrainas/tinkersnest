@@ -9,7 +9,15 @@ type StorePost struct {
 	Post *v1.Post
 }
 
-type StoreGrant struct {
-	New   bool
-	Grant *v1.Grant
+type CreateClaim struct {
+	Code         string
+	ResourceType v1.ResourceType
+}
+
+type RedeemClaim struct {
+	Code string
+}
+
+type StoreUser struct {
+	User *v1.User
 }
