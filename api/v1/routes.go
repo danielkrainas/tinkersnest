@@ -8,6 +8,7 @@ const (
 	RouteNamePostByName   = "post-by-name"
 	RouteNameUserRegistry = "users"
 	RouteNameUserByName   = "user-by-name"
+	RouteNameAuth         = "auth"
 )
 
 func Router() *mux.Router {

@@ -79,6 +79,7 @@ func NewApp(ctx context.Context, config *configuration.Config) (*App, error) {
 	app.register(v1.RouteNamePostByName, postByNameDispatcher)
 	app.register(v1.RouteNameUserRegistry, userRegistryDispatcher)
 	app.register(v1.RouteNameUserByName, userByNameDispatcher)
+	app.register(v1.RouteNameAuth, authDispatcher)
 	return app, nil
 }
 
