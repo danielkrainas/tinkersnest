@@ -187,6 +187,10 @@ func preloadClaim(ctx *appRequestContext, r *http.Request) error {
 			return fmt.Errorf("claim data is invalid")
 		}
 
+		if claim.Redeemed != 0 {
+			return fmt.Errorf("no such claim")
+		}
+
 		ctx.Context = context.WithValue(ctx.Context, "claim", claim)
 		ctx.Context = acontext.WithLogger(ctx.Context, acontext.GetLoggerWithField(ctx.Context, "claim", code))
 
