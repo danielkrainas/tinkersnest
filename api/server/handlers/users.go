@@ -10,6 +10,7 @@ import (
 
 	"github.com/danielkrainas/tinkersnest/api/errcode"
 	"github.com/danielkrainas/tinkersnest/api/v1"
+	"github.com/danielkrainas/tinkersnest/auth"
 	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/cqrs"
 	"github.com/danielkrainas/tinkersnest/cqrs/commands"
@@ -78,6 +79,13 @@ func (ctx *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if u.Salt, err = auth.GenerateSalt(); err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	u.HashedPassword = auth.HashPassword(u.Password, u.Salt)
 	if err := cqrs.DispatchCommand(ctx, &commands.StoreUser{New: true, User: u}); err != nil {
 		acontext.GetLogger(ctx).Error(err)
 		ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
