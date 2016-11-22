@@ -188,6 +188,7 @@ func preloadClaim(ctx *appRequestContext, r *http.Request) error {
 		}
 
 		if claim.Redeemed != 0 {
+			// TODO: api error type
 			return fmt.Errorf("no such claim")
 		}
 

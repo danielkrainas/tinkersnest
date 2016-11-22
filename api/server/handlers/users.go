@@ -86,6 +86,15 @@ func (ctx *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if claim, ok := ctx.Value("claim").(*v1.Claim); ok {
+		err := cqrs.DispatchCommand(ctx, &commands.RedeemClaim{Code: claim.Code})
+		if err != nil {
+			acontext.GetLogger(ctx).Error(err)
+			ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
+			return
+		}
+	}
+
 	acontext.GetLoggerWithField(ctx, "user.name", p.Name).Infof("user %q created", p.Name)
 	if err := v1.ServeJSON(w, p); err != nil {
 		acontext.GetLogger(ctx).Errorf("error sending user json: %v", err)
