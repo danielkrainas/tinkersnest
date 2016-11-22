@@ -15,7 +15,8 @@ type CreateClaim struct {
 }
 
 type RedeemClaim struct {
-	Code string
+	Code         string
+	ResourceType v1.ResourceType
 }
 
 type StoreUser struct {
