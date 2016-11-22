@@ -47,8 +47,6 @@ func (ctx *userHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 		Name: userName,
 	})
 
-	// assume
-	//claimCode := r.Header.Get("TINKERSNEST-CLAIM")
 	if err != nil {
 		acontext.GetLogger(ctx).Error(err)
 		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
@@ -73,14 +71,14 @@ func (ctx *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p := &v1.User{}
-	if err = json.Unmarshal(body, p); err != nil {
+	u := &v1.User{}
+	if err = json.Unmarshal(body, u); err != nil {
 		acontext.GetLogger(ctx).Error(err)
 		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
 		return
 	}
 
-	if err := cqrs.DispatchCommand(ctx, &commands.StoreUser{New: true, User: p}); err != nil {
+	if err := cqrs.DispatchCommand(ctx, &commands.StoreUser{New: true, User: u}); err != nil {
 		acontext.GetLogger(ctx).Error(err)
 		ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
 		return
@@ -95,8 +93,8 @@ func (ctx *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	acontext.GetLoggerWithField(ctx, "user.name", p.Name).Infof("user %q created", p.Name)
-	if err := v1.ServeJSON(w, p); err != nil {
+	acontext.GetLoggerWithField(ctx, "user.name", u.Name).Infof("user %q created", u.Name)
+	if err := v1.ServeJSON(w, u); err != nil {
 		acontext.GetLogger(ctx).Errorf("error sending user json: %v", err)
 	}
 }
