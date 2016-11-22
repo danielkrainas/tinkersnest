@@ -11,6 +11,8 @@ import (
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/context"
+	"github.com/danielkrainas/tinkersnest/cqrs"
+	"github.com/danielkrainas/tinkersnest/cqrs/queries"
 )
 
 type dispatchFunc func(ctx context.Context, r *http.Request) http.Handler
@@ -85,7 +87,12 @@ func (app *App) dispatcher(dispatch dispatchFunc) http.Handler {
 		ctx := app.context(w, r)
 		ctx.Context = acontext.WithErrors(ctx.Context, make(errcode.Errors, 0))
 
-		dispatch(ctx, r).ServeHTTP(w, r)
+		if err := preloadClaim(ctx, r); err != nil {
+			acontext.GetLogger(ctx).Error(err)
+			ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		} else {
+			dispatch(ctx, r).ServeHTTP(w, r)
+		}
 
 		if errors := acontext.GetErrors(ctx); errors.Len() > 0 {
 			if err := errcode.ServeJSON(w, errors); err != nil {
@@ -161,6 +168,46 @@ func (app *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("TINKERSNEST-VERSION", acontext.GetVersion(ctx))
 	app.router.ServeHTTP(w, r)
+}
+
+func preloadClaim(ctx *appRequestContext, r *http.Request) error {
+	code := r.Header.Get("TINKERSNEST-CLAIM")
+	if code != "" {
+		route := mux.CurrentRoute(r)
+		routeName := route.GetName()
+
+		rclaim, err := cqrs.DispatchQuery(ctx, &queries.FindClaim{Code: code})
+		if err != nil {
+			return err
+		}
+
+		claim, ok := rclaim.(*v1.Claim)
+		if !ok {
+			// TODO: api error type
+			return fmt.Errorf("claim data is invalid")
+		}
+
+		ctx.Context = context.WithValue(ctx.Context, "claim", claim)
+		ctx.Context = acontext.WithLogger(ctx.Context, acontext.GetLoggerWithField(ctx.Context, "claim", code))
+
+		expect := v1.NoResource
+		switch routeName {
+		case v1.RouteNameBlog:
+			expect = v1.PostResource
+		case v1.RouteNameUserRegistry:
+			expect = v1.UserResource
+		default:
+			// not something that requires a claim
+			acontext.GetLogger(ctx).Warn("ignoring unneeded claim for this request")
+		}
+
+		if expect != v1.NoResource && expect != claim.ResourceType {
+			// TODO: api error type
+			return fmt.Errorf("claim cannot be used for %q resources", expect)
+		}
+	}
+
+	return nil
 }
 
 func apiBase(w http.ResponseWriter, r *http.Request) {

@@ -8,6 +8,7 @@ import (
 type ResourceType string
 
 var (
+	NoResource   ResourceType
 	PostResource ResourceType = "post"
 	UserResource ResourceType = "user"
 )
