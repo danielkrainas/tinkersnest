@@ -4,7 +4,8 @@ type User struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	FullName string `json:"full_name"`
+	Password string `json:"password"`
 
-	Salt           int    `json:"-"`
+	Salt           []byte `json:"-"`
 	HashedPassword string `json:"-"`
 }
