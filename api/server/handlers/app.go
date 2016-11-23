@@ -13,6 +13,7 @@ import (
 	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/cqrs"
 	"github.com/danielkrainas/tinkersnest/cqrs/queries"
+	"github.com/danielkrainas/tinkersnest/storage"
 )
 
 type dispatchFunc func(ctx context.Context, r *http.Request) http.Handler
@@ -90,7 +91,7 @@ func (app *App) dispatcher(dispatch dispatchFunc) http.Handler {
 
 		if err := preloadClaim(ctx, r); err != nil {
 			acontext.GetLogger(ctx).Error(err)
-			ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+			ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
 		} else {
 			dispatch(ctx, r).ServeHTTP(w, r)
 		}
@@ -178,8 +179,10 @@ func preloadClaim(ctx *appRequestContext, r *http.Request) error {
 		routeName := route.GetName()
 
 		rclaim, err := cqrs.DispatchQuery(ctx, &queries.FindClaim{Code: code})
-		if err != nil {
+		if err != nil && err != storage.ErrNotFound {
 			return err
+		} else if err == storage.ErrNotFound {
+			return fmt.Errorf("no such claim")
 		}
 
 		claim, ok := rclaim.(*v1.Claim)

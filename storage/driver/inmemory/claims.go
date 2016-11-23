@@ -86,5 +86,5 @@ func (s *claimStore) FindClaim(ctx context.Context, q *queries.FindClaim) (inter
 		}
 	}
 
-	return nil, nil
+	return nil, storage.ErrNotFound
 }

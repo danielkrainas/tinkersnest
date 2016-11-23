@@ -51,27 +51,43 @@ func (m *SetupManager) AddFirstUserClaim(ctx context.Context) *v1.Claim {
 }
 
 func (m *SetupManager) Handle(ctx context.Context, cmd cqrs.Command) error {
-	if err := m.handleFirstUserClaim(ctx, cmd); err != nil && err != cqrs.ErrNoHandler {
-		return err
+	switch ct := cmd.(type) {
+	case *commands.RedeemClaim:
+		return m.handleFirstUserClaim(ctx, ct)
 	}
 
 	return cqrs.ErrNoHandler
 }
 
-func (m *SetupManager) handleFirstUserClaim(ctx context.Context, cmd cqrs.Command) error {
+func (m *SetupManager) handleFirstUserClaim(ctx context.Context, cmd *commands.RedeemClaim) error {
 	m.userMutex.Lock()
 	defer m.userMutex.Unlock()
 	if m.firstUserClaim != nil {
-		if r, ok := cmd.(*commands.RedeemClaim); !ok && r.Code == m.firstUserClaim.Code {
+		if cmd.Code == m.firstUserClaim.Code {
 			m.firstUserClaim = nil
-			acontext.GetLogger(ctx).Warnf("first user claim %s redeemed", r.Code)
+			acontext.GetLogger(ctx).Warnf("first user claim %s redeemed", cmd.Code)
 			return nil
 		}
 	}
 
-	return nil
+	return cqrs.ErrNoHandler
 }
 
 func (m *SetupManager) Execute(ctx context.Context, q cqrs.Query) (interface{}, error) {
+	switch qt := q.(type) {
+	case *queries.FindClaim:
+		return m.executeFindClaim(ctx, qt)
+	}
+
+	return nil, cqrs.ErrNoExecutor
+}
+
+func (m *SetupManager) executeFindClaim(ctx context.Context, q *queries.FindClaim) (*v1.Claim, error) {
+	m.userMutex.Lock()
+	defer m.userMutex.Unlock()
+	if m.firstUserClaim != nil && m.firstUserClaim.Code == q.Code {
+		return m.firstUserClaim, nil
+	}
+
 	return nil, cqrs.ErrNoExecutor
 }

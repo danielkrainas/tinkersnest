@@ -6,4 +6,4 @@ spec:
   user:
     email: 'me@danielkrainas.com'
     full_name: 'Danny Krainas'
-    
+    password: 'password123'
