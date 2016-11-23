@@ -104,6 +104,7 @@ func userFromSpec(name string, spec map[string]interface{}) (*v1.User, error) {
 		Name:     name,
 		Email:    m["email"].(string),
 		FullName: m["full_name"].(string),
+		Password: m["password"].(string),
 	}
 
 	return u, nil
