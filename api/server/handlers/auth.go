@@ -64,7 +64,7 @@ func (ctx *authHandler) Auth(w http.ResponseWriter, r *http.Request) {
 	acontext.GetLogger(ctx).Warnf("using %s", creds.Password)
 	acontext.GetLogger(ctx).Warnf("attempting %s", creds.HashedPassword)
 	acontext.GetLogger(ctx).Warnf("expecting %s", user.HashedPassword)
-	if creds.HashedPassword != creds.Password {
+	if creds.HashedPassword != user.HashedPassword {
 		acontext.GetLogger(ctx).Error("invalid username or password")
 		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail("invalid username or password"))
 		return
