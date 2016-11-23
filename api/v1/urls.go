@@ -80,6 +80,17 @@ func (ub *URLBuilder) BuildBaseURL() (string, error) {
 	return baseURL.String(), nil
 }
 
+func (ub *URLBuilder) BuildAuth() (string, error) {
+	route := ub.cloneRoute(RouteNameAuth)
+
+	routeUrl, err := route.URL()
+	if err != nil {
+		return "", err
+	}
+
+	return routeUrl.String(), nil
+}
+
 func (ub *URLBuilder) BuildUserRegistry() (string, error) {
 	route := ub.cloneRoute(RouteNameUserRegistry)
 

@@ -16,6 +16,7 @@ type Client struct {
 	Endpoint   string
 	HTTPClient *http.Client
 	UserAgent  string
+	AuthToken  AuthToken
 }
 
 func New(endpoint string, httpClient *http.Client) *Client {
@@ -65,5 +66,9 @@ func (c *Client) Ping() error {
 
 func (c *Client) do(r *http.Request) (*http.Response, error) {
 	r.Header.Add("USER-AGENT", c.UserAgent)
+	if c.AuthToken != InvalidToken {
+		r.Header.Add("Authorization", "Bearer "+string(c.AuthToken))
+	}
+
 	return c.HTTPClient.Do(r)
 }
