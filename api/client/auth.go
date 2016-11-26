@@ -5,12 +5,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-)
 
-type Credentials struct {
-	Name     string `json:"name"`
-	Password string `json:"password"`
-}
+	"github.com/danielkrainas/tinkersnest/api/v1"
+)
 
 type AuthToken string
 
@@ -19,7 +16,7 @@ var (
 )
 
 type AuthAPI interface {
-	Login(c *Credentials) (AuthToken, error)
+	Login(username, password string) (AuthToken, error)
 }
 
 type authAPI struct {
@@ -30,8 +27,9 @@ func (c *Client) Auth() AuthAPI {
 	return &authAPI{c}
 }
 
-func (api *authAPI) Login(c *Credentials) (AuthToken, error) {
-	body, err := json.Marshal(&c)
+func (api *authAPI) Login(username, password string) (AuthToken, error) {
+	u := &v1.User{Name: username, Password: password}
+	body, err := json.Marshal(u)
 	if err != nil {
 		return InvalidToken, err
 	}
