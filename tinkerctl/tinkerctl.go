@@ -8,6 +8,7 @@ import (
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/create"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/describe"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/get"
+	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/login"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/ping"
 	"github.com/danielkrainas/tinkersnest/tinkerctl/cmd/root"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/version"
