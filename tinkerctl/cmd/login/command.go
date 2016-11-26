@@ -28,6 +28,10 @@ func run(ctx context.Context, args []string) error {
 
 	endpoint := args[0]
 
+	if err := local.EnsureHomeExists(); err != nil {
+		return err
+	}
+
 	config, err := local.LoadAuthConfig()
 	if err != nil {
 		return err
@@ -49,14 +53,14 @@ func run(ctx context.Context, args []string) error {
 	}
 
 	username = strings.TrimSpace(username)
-	passwordStr = strings.TrimSpace(string(password))
+	passwordStr := strings.TrimSpace(string(password))
 
 	token, err := c.Auth().Login(username, passwordStr)
 	if err != nil {
 		return err
 	}
 
-	config.Set(&local.AuthConfig{
+	config.Set(&local.HostConfig{
 		Host:     endpoint,
 		Username: username,
 		Token:    token,
