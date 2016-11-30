@@ -2,8 +2,6 @@
 
 ## Building 
 
-One caveat with building currently is that because of the cAdvisor dependency for the containers driver, `cgo` *cannot* be disabled; the build will fail. So no `CGO_ENABLED=0` builds.
-
 #### Dev/Local build
 
 Use `go` and build from the root of the project:
