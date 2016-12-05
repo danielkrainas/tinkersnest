@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-Unlicense-blue.svg?style=flat)](UNLICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/danielkrainas/tinkersnest)](https://goreportcard.com/report/github.com/danielkrainas/tinkersnest) [![Docker Hub](https://img.shields.io/docker/pulls/dakr/tinkersnest.svg?style=flat)](https://hub.docker.com/r/dakr/tinkersnest/)
 
-TinkersNest
+TinkersNest is a developer-centric backend CMS service. 
 
 ## Installation
 
