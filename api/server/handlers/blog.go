@@ -24,6 +24,7 @@ func blogListDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	return handlers.MethodHandler{
 		"GET":  withTraceLogging("GetAllPosts", h.GetAllPosts),
 		"POST": withTraceLogging("CreatePost", h.CreatePost),
+		"DELETE": withTraceLogging("DeletePost", h.DeletePost),
 	}
 }
 
@@ -39,6 +40,28 @@ func postByNameDispatcher(ctx context.Context, r *http.Request) http.Handler {
 
 type blogHandler struct {
 	context.Context
+}
+
+func (ctx *blogHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
+	postName := acontext.GetStringValue(ctx, "vars.post_name")
+	post, err := cqrs.DispatchQuery(ctx, &queries.FindPost{
+		Name: postName,
+	})
+
+	if err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	if post == nil {
+		ctx.Context = acontext.AppendError(ctx, v1.ErrorCodeResourceUnknown)
+		return
+	}
+
+	if err := v1.ServeJSON(w, post); err != nil {
+		acontext.GetLogger(ctx).Errorf("error sending post json: %v", err)
+	}
 }
 
 func (ctx *blogHandler) GetPost(w http.ResponseWriter, r *http.Request) {

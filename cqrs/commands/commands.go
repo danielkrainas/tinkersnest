@@ -9,6 +9,10 @@ type StorePost struct {
 	Post *v1.Post
 }
 
+type DeletePost struct {
+	Name string
+}
+
 type CreateClaim struct {
 	Code         string
 	ResourceType v1.ResourceType

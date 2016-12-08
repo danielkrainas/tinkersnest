@@ -7,6 +7,7 @@ import (
 
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/cqrs"
+	"github.com/danielkrainas/tinkersnest/storage"
 	"github.com/danielkrainas/tinkersnest/cqrs/commands"
 	"github.com/danielkrainas/tinkersnest/cqrs/queries"
 	"github.com/danielkrainas/tinkersnest/util/slugify"
@@ -20,6 +21,7 @@ func init() {
 	}
 
 	registerCommand(&commands.StorePost{}, blog)
+	registerCommand(&commands.DeletePost{}, blog)
 	registerQuery(&queries.SearchPosts{}, blog)
 	registerQuery(&queries.FindPost{}, blog)
 }
@@ -45,6 +47,8 @@ func (s *postStore) Handle(ctx context.Context, c cqrs.Command) error {
 	switch c := c.(type) {
 	case *commands.StorePost:
 		return s.StorePost(ctx, c)
+	case *commands.DeletePost:
+		return s.DeletePost(ctx, c)
 	}
 
 	return cqrs.ErrNoHandler
@@ -66,6 +70,19 @@ func (s *postStore) FindPost(ctx context.Context, q *queries.FindPost) (interfac
 	}
 
 	return nil, nil
+}
+
+func (s *postStore) DeletePost(ctx context.Context, c *commands.DeletePost) error {
+	s.m.Lock()
+	defer s.m.Unlock()
+	for i, p := range s.posts {
+		if p.Name == c.Name {
+			s.posts = append(s.posts[:i], s.posts[i+1:]...)
+			return nil
+		}
+	}
+
+	return storage.ErrNotFound
 }
 
 func (s *postStore) StorePost(ctx context.Context, c *commands.StorePost) error {
