@@ -93,22 +93,26 @@ func (app *App) authorizeUser(ctx *appRequestContext, r *http.Request) error {
 	bearer := r.Header.Get("Authorization")
 	authParts := strings.Split(bearer, ":")
 	bearer = strings.TrimSpace(authParts[len(authParts)-1])
-	if bearer == "" && routeName != v1.RouteNameAuth {
-		return errors.New("invalid bearer token")
-	} else if bearer != "" {
-		userName, err := auth.VerifyBearerToken(bearer)
-		if err != nil {
-			return err
+	if bearer == "" {
+		_, hasClaim := ctx.Value("claim").(*v1.Claim)
+		if hasClaim && r.Method == http.MethodPost {
+			return nil
+		} else if routeName != v1.RouteNameAuth {
+			return errors.New("invalid bearer token")
 		}
+	} 
 
-		user, err := cqrs.DispatchQuery(ctx, queries.FindUser{userName})
-		if err != nil {
-			return err
-		}
-
-		ctx.Context = context.WithValue(ctx.Context, "user", user)
+	userName, err := auth.VerifyBearerToken(bearer)
+	if err != nil {
+		return err
 	}
 
+	user, err := cqrs.DispatchQuery(ctx, queries.FindUser{userName})
+	if err != nil {
+		return err
+	}
+
+	ctx.Context = context.WithValue(ctx.Context, "user", user)
 	return nil
 }
 
