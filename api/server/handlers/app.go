@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
+	"errors"
 
 	"github.com/gorilla/mux"
 
@@ -11,6 +13,7 @@ import (
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/context"
+	"github.com/danielkrainas/tinkersnest/auth"
 	"github.com/danielkrainas/tinkersnest/cqrs"
 	"github.com/danielkrainas/tinkersnest/cqrs/queries"
 	"github.com/danielkrainas/tinkersnest/storage"
@@ -84,12 +87,40 @@ func NewApp(ctx context.Context, config *configuration.Config) (*App, error) {
 	return app, nil
 }
 
+func (app *App) authorizeUser(ctx *appRequestContext, r *http.Request) error {
+	route := mux.CurrentRoute(r)
+	routeName := route.GetName()
+	bearer := r.Header.Get("Authorization")
+	authParts := strings.Split(bearer, ":")
+	bearer = strings.TrimSpace(authParts[len(authParts)-1])
+	if bearer == "" && routeName != v1.RouteNameAuth {
+		return errors.New("invalid bearer token")
+	} else if bearer != "" {
+		userName, err := auth.VerifyBearerToken(bearer)
+		if err != nil {
+			return err
+		}
+
+		user, err := cqrs.DispatchQuery(ctx, queries.FindUser{userName})
+		if err != nil {
+			return err
+		}
+
+		ctx.Context = context.WithValue(ctx.Context, "user", user)
+	}
+
+	return nil
+}
+
 func (app *App) dispatcher(dispatch dispatchFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := app.context(w, r)
 		ctx.Context = acontext.WithErrors(ctx.Context, make(errcode.Errors, 0))
 
 		if err := preloadClaim(ctx, r); err != nil {
+			acontext.GetLogger(ctx).Error(err)
+			ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
+		} else if err := app.authorizeUser(ctx, r); err != nil {
 			acontext.GetLogger(ctx).Error(err)
 			ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
 		} else {
