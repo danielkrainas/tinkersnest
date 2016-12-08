@@ -190,40 +190,6 @@ var routeDescriptors = []describe.Route{
 		},
 	},
 	{
-		Name:        RouteNameAuth,
-		Path:        "/v1/{resource_type}",
-		Entity:      "JWT",
-		Description: "",
-		Methods: []describe.Method{
-			{
-				Method:      "POST",
-				Description: "",
-				Requests: []describe.Request{
-					{
-						Headers: []describe.Parameter{
-							hostHeader,
-						},
-
-						Successes: []describe.Response{
-							{
-								Description: "All posts returned",
-								StatusCode:  http.StatusOK,
-								Headers: []describe.Parameter{
-									versionHeader,
-									jsonContentLengthHeader,
-								},
-
-								Body: describe.Body{
-									ContentType: "application/json; charset=utf-8",
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	},
-	{
 		Name:        RouteNamePostByName,
 		Path:        "/v1/blog/posts/{post_name}",
 		Entity:      "Post",
@@ -231,7 +197,7 @@ var routeDescriptors = []describe.Route{
 		Methods: []describe.Method{
 			{
 				Method:      "GET",
-				Description: "Get all posts",
+				Description: "Get a post by name",
 				Requests: []describe.Request{
 					{
 						Headers: []describe.Parameter{
@@ -254,6 +220,32 @@ var routeDescriptors = []describe.Route{
 								Body: describe.Body{
 									ContentType: "application/json; charset=utf-8",
 									Format:      blogPostBody,
+								},
+							},
+						},
+					},
+				},
+			},
+			{
+				Method:      "DELETE",
+				Description: "Delete a post by name",
+				Requests: []describe.Request{
+					{
+						Headers: []describe.Parameter{
+							hostHeader,
+						},
+
+						PathParameters: []describe.Parameter{
+							postNameParameter,
+						},
+
+						Successes: []describe.Response{
+							{
+								Description: "post removed",
+								StatusCode:  http.StatusNoContent,
+								Headers: []describe.Parameter{
+									versionHeader,
+									zeroContentLengthHeader,
 								},
 							},
 						},

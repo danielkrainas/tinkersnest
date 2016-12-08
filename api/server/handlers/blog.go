@@ -12,6 +12,7 @@ import (
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/cqrs"
+	"github.com/danielkrainas/tinkersnest/storage"
 	"github.com/danielkrainas/tinkersnest/cqrs/commands"
 	"github.com/danielkrainas/tinkersnest/cqrs/queries"
 )
@@ -44,24 +45,20 @@ type blogHandler struct {
 
 func (ctx *blogHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 	postName := acontext.GetStringValue(ctx, "vars.post_name")
-	post, err := cqrs.DispatchQuery(ctx, &queries.FindPost{
-		Name: postName,
-	})
-
+	err := cqrs.DispatchCommand(ctx, &commands.DeletePost{postName})
 	if err != nil {
-		acontext.GetLogger(ctx).Error(err)
-		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
-		return
+		if err == storage.ErrNotFound {
+			acontext.GetLogger(ctx).Error("post not found")
+			ctx.Context = acontext.AppendError(ctx, v1.ErrorCodeResourceUnknown)
+			return
+		} else {
+			acontext.GetLogger(ctx).Error(err)
+			ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+			return	
+		}
 	}
 
-	if post == nil {
-		ctx.Context = acontext.AppendError(ctx, v1.ErrorCodeResourceUnknown)
-		return
-	}
-
-	if err := v1.ServeJSON(w, post); err != nil {
-		acontext.GetLogger(ctx).Errorf("error sending post json: %v", err)
-	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (ctx *blogHandler) GetPost(w http.ResponseWriter, r *http.Request) {
