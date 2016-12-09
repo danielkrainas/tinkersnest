@@ -12,6 +12,7 @@ import (
 type UserAPI interface {
 	SearchUsers() ([]*v1.User, error)
 	CreateUser(user *v1.User) (*v1.User, error)
+	UpdateUser(user *v1.User) (*v1.User, error)
 	CreateUserWithClaim(user *v1.User, claim string) (*v1.User, error)
 	GetUser(name string) (*v1.User, error)
 	DeleteUser(name string) error
@@ -111,6 +112,41 @@ func (api *usersAPI) SearchUsers() ([]*v1.User, error) {
 	}
 
 	return p, nil
+}
+
+func (api *usersAPI) UpdateUser(user *v1.User) (*v1.User, error) {
+	body, err := json.Marshal(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	url, err := api.urls().BuildUserByName(user.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := api.do(r)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	u := &v1.User{}
+	if err = json.Unmarshal(body, u); err != nil {
+		return nil, err
+	}
+
+	return u, nil
 }
 
 func (api *usersAPI) CreateUser(user *v1.User) (*v1.User, error) {

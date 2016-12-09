@@ -11,6 +11,7 @@ import (
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/login"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/ping"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/delete"
+	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/update"
 	"github.com/danielkrainas/tinkersnest/tinkerctl/cmd/root"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/version"
 )

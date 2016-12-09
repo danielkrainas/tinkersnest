@@ -28,13 +28,13 @@ func run(ctx context.Context, args []string) error {
 	name := args[1]
 	switch args[0] {
 	case "user":
-		user, err := c.Users().DeleteUser(name)
+		err := c.Users().DeleteUser(name)
 		if err != nil {
 			return err
 		}
 
 	case "post":
-		post, err := c.Blog().DeletePost(name)
+		err := c.Blog().DeletePost(name)
 		if err != nil {
 			return err
 		}

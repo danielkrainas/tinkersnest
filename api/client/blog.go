@@ -12,6 +12,7 @@ import (
 type BlogAPI interface {
 	SearchPosts() ([]*v1.Post, error)
 	CreatePost(post *v1.Post) (*v1.Post, error)
+	UpdatePost(post *v1.Post) (*v1.Post, error)
 	GetPost(name string) (*v1.Post, error)
 	DeletePost(name string) error
 }
@@ -124,6 +125,41 @@ func (api *blogAPI) CreatePost(post *v1.Post) (*v1.Post, error) {
 	}
 
 	r, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := api.do(r)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	p := &v1.Post{}
+	if err = json.Unmarshal(body, p); err != nil {
+		return nil, err
+	}
+
+	return p, nil
+}
+
+func (api *blogAPI) UpdatePost(post *v1.Post) (*v1.Post, error) {
+	body, err := json.Marshal(&post)
+	if err != nil {
+		return nil, err
+	}
+
+	url, err := api.urls().BuildPostByName(post.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
 	}
