@@ -36,11 +36,64 @@ func postByNameDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	return handlers.MethodHandler{
 		"GET": withTraceLogging("GetPost", h.GetPost),
 		"DELETE": withTraceLogging("DeletePost", h.DeletePost),
+		"PUT": withTraceLogging("UpdatePost", h.UpdatePost),
 	}
 }
 
 type blogHandler struct {
 	context.Context
+}
+
+func (ctx *blogHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
+	postName := acontext.GetStringValue(ctx, "vars.post_name")
+	postRaw, err := cqrs.DispatchQuery(ctx, &queries.FindPost{
+		Name: postName,
+	})
+
+	if err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	if postRaw == nil {
+		ctx.Context = acontext.AppendError(ctx, v1.ErrorCodeResourceUnknown)
+		return
+	}
+
+	post := postRaw.(*v1.Post)
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	p := &v1.Post{}
+	if err = json.Unmarshal(body, p); err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	post.Publish = p.Publish
+	if p.Title != "" {
+		post.Title = p.Title
+	}
+
+	if len(p.Content) > 0 {
+		post.Content = p.Content
+	}
+
+	if err := cqrs.DispatchCommand(ctx, &commands.StorePost{New: false, Post: post}); err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	if err := v1.ServeJSON(w, post); err != nil {
+		acontext.GetLogger(ctx).Errorf("error sending post json: %v", err)
+	}
 }
 
 func (ctx *blogHandler) DeletePost(w http.ResponseWriter, r *http.Request) {

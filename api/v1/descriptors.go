@@ -227,6 +227,37 @@ var routeDescriptors = []describe.Route{
 				},
 			},
 			{
+				Method:      "PUT",
+				Description: "Modify a single blog post",
+				Requests: []describe.Request{
+					{
+						Headers: []describe.Parameter{
+							hostHeader,
+						},
+
+						PathParameters: []describe.Parameter{
+							postNameParameter,
+						},
+
+						Successes: []describe.Response{
+							{
+								Description: "user returned",
+								StatusCode:  http.StatusOK,
+								Headers: []describe.Parameter{
+									versionHeader,
+									jsonContentLengthHeader,
+								},
+
+								Body: describe.Body{
+									ContentType: "application/json; charset=utf-8",
+									Format:      blogPostBody,
+								},
+							},
+						},
+					},
+				},
+			},
+			{
 				Method:      "DELETE",
 				Description: "Delete a post by name",
 				Requests: []describe.Request{
