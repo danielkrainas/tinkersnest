@@ -37,11 +37,67 @@ func userByNameDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	return handlers.MethodHandler{
 		"GET": withTraceLogging("GetUser", h.GetUser),
 		"DELETE": withTraceLogging("DeleteUser", h.DeleteUser),
+		"PUT": withTraceLogging("UpdateUser", h.UpdateUser),
 	}
 }
 
 type userHandler struct {
 	context.Context
+}
+
+func (ctx *userHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	userName := acontext.GetStringValue(ctx, "vars.user_name")
+	userRaw, err := cqrs.DispatchQuery(ctx, &queries.FindUser{
+		Name: userName,
+	})
+
+	if err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	if userRaw == nil {
+		ctx.Context = acontext.AppendError(ctx, v1.ErrorCodeResourceUnknown)
+		return
+	}
+
+	user := userRaw.(*v1.User)
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	u := &v1.User{}
+	if err = json.Unmarshal(body, u); err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	if u.Password != "" {
+		user.HashedPassword = auth.HashPassword(u.Password, user.Salt)
+	}
+
+	if u.Email != "" {
+		user.Email = u.Email
+	}
+
+	if u.FullName != "" {
+		user.FullName = u.FullName
+	}
+
+	if err := cqrs.DispatchCommand(ctx, &commands.StoreUser{New: false, User: user}); err != nil {
+		acontext.GetLogger(ctx).Error(err)
+		ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
+		return
+	}
+
+	if err := v1.ServeJSON(w, user); err != nil {
+		acontext.GetLogger(ctx).Errorf("error sending user json: %v", err)
+	}
 }
 
 func (ctx *userHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +120,7 @@ func (ctx *userHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 func (ctx *userHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	userName := acontext.GetStringValue(ctx, "vars.user_name")
-	post, err := cqrs.DispatchQuery(ctx, &queries.FindUser{
+	user, err := cqrs.DispatchQuery(ctx, &queries.FindUser{
 		Name: userName,
 	})
 
@@ -74,13 +130,13 @@ func (ctx *userHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if post == nil {
+	if user == nil {
 		ctx.Context = acontext.AppendError(ctx, v1.ErrorCodeResourceUnknown)
 		return
 	}
 
-	if err := v1.ServeJSON(w, post); err != nil {
-		acontext.GetLogger(ctx).Errorf("error sending post json: %v", err)
+	if err := v1.ServeJSON(w, user); err != nil {
+		acontext.GetLogger(ctx).Errorf("error sending user json: %v", err)
 	}
 }
 
