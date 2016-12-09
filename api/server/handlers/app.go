@@ -113,6 +113,7 @@ func (app *App) authorizeUser(ctx *appRequestContext, r *http.Request) error {
 	}
 
 	ctx.Context = context.WithValue(ctx.Context, "user", user)
+	ctx.Context = acontext.WithLogger(ctx.Context, acontext.GetLoggerWithField(ctx.Context, "user.name", userName))
 	return nil
 }
 
