@@ -25,7 +25,6 @@ func blogListDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	return handlers.MethodHandler{
 		"GET":  withTraceLogging("GetAllPosts", h.GetAllPosts),
 		"POST": withTraceLogging("CreatePost", h.CreatePost),
-		"DELETE": withTraceLogging("DeletePost", h.DeletePost),
 	}
 }
 
@@ -36,6 +35,7 @@ func postByNameDispatcher(ctx context.Context, r *http.Request) http.Handler {
 
 	return handlers.MethodHandler{
 		"GET": withTraceLogging("GetPost", h.GetPost),
+		"DELETE": withTraceLogging("DeletePost", h.DeletePost),
 	}
 }
 

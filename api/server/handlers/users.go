@@ -26,7 +26,6 @@ func userRegistryDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	return handlers.MethodHandler{
 		"GET":  withTraceLogging("GetAllUsers", h.GetAllUsers),
 		"POST": withTraceLogging("CreateUser", h.CreateUser),
-		"DELETE": withTraceLogging("DeleteUser", h.DeleteUser),
 	}
 }
 
@@ -37,6 +36,7 @@ func userByNameDispatcher(ctx context.Context, r *http.Request) http.Handler {
 
 	return handlers.MethodHandler{
 		"GET": withTraceLogging("GetUser", h.GetUser),
+		"DELETE": withTraceLogging("DeleteUser", h.DeleteUser),
 	}
 }
 
