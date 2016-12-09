@@ -13,6 +13,7 @@ type BlogAPI interface {
 	SearchPosts() ([]*v1.Post, error)
 	CreatePost(post *v1.Post) (*v1.Post, error)
 	GetPost(name string) (*v1.Post, error)
+	DeletePost(name string) error
 }
 
 type blogAPI struct {
@@ -21,6 +22,32 @@ type blogAPI struct {
 
 func (c *Client) Blog() BlogAPI {
 	return &blogAPI{c}
+}
+
+func (api *blogAPI) DeletePost(name string) error {
+	url, err := api.urls().BuildPostByName(name)
+	if err != nil {
+		return err
+	}
+
+	r, err := http.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := api.do(r)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	_, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (api *blogAPI) GetPost(name string) (*v1.Post, error) {

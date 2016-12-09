@@ -14,6 +14,7 @@ type UserAPI interface {
 	CreateUser(user *v1.User) (*v1.User, error)
 	CreateUserWithClaim(user *v1.User, claim string) (*v1.User, error)
 	GetUser(name string) (*v1.User, error)
+	DeleteUser(name string) error
 }
 
 type usersAPI struct {
@@ -53,6 +54,32 @@ func (api *usersAPI) GetUser(name string) (*v1.User, error) {
 	}
 
 	return p, nil
+}
+
+func (api *usersAPI) DeleteUser(name string) error {
+	url, err := api.urls().BuildUserByName(name)
+	if err != nil {
+		return err
+	}
+
+	r, err := http.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := api.do(r)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	_, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (api *usersAPI) SearchUsers() ([]*v1.User, error) {

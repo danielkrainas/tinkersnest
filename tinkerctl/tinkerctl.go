@@ -10,6 +10,7 @@ import (
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/get"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/login"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/ping"
+	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/delete"
 	"github.com/danielkrainas/tinkersnest/tinkerctl/cmd/root"
 	_ "github.com/danielkrainas/tinkersnest/tinkerctl/cmd/version"
 )
