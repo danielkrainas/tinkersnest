@@ -15,6 +15,7 @@ import (
 	"github.com/danielkrainas/tinkersnest/cqrs"
 	"github.com/danielkrainas/tinkersnest/cqrs/commands"
 	"github.com/danielkrainas/tinkersnest/cqrs/queries"
+	"github.com/danielkrainas/tinkersnest/storage"
 )
 
 func userRegistryDispatcher(ctx context.Context, r *http.Request) http.Handler {
@@ -25,6 +26,7 @@ func userRegistryDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	return handlers.MethodHandler{
 		"GET":  withTraceLogging("GetAllUsers", h.GetAllUsers),
 		"POST": withTraceLogging("CreateUser", h.CreateUser),
+		"DELETE": withTraceLogging("DeleteUser", h.DeleteUser),
 	}
 }
 
@@ -40,6 +42,24 @@ func userByNameDispatcher(ctx context.Context, r *http.Request) http.Handler {
 
 type userHandler struct {
 	context.Context
+}
+
+func (ctx *userHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	userName := acontext.GetStringValue(ctx, "vars.user_name")
+	err := cqrs.DispatchCommand(ctx, &commands.DeleteUser{userName})
+	if err != nil {
+		if err == storage.ErrNotFound {
+			acontext.GetLogger(ctx).Error("user not found")
+			ctx.Context = acontext.AppendError(ctx, v1.ErrorCodeResourceUnknown)
+			return
+		} else {
+			acontext.GetLogger(ctx).Error(err)
+			ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
+			return	
+		}
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (ctx *userHandler) GetUser(w http.ResponseWriter, r *http.Request) {

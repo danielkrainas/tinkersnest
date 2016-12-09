@@ -323,11 +323,11 @@ var routeDescriptors = []describe.Route{
 		Name:        RouteNameUserByName,
 		Path:        "/v1/users/{user_name}",
 		Entity:      "User",
-		Description: "Route to retrieve, update, and delete a single post by name.",
+		Description: "Route to retrieve, update, and delete a single user by name.",
 		Methods: []describe.Method{
 			{
 				Method:      "GET",
-				Description: "Get all posts",
+				Description: "Retrieve a single user",
 				Requests: []describe.Request{
 					{
 						Headers: []describe.Parameter{
@@ -340,7 +340,7 @@ var routeDescriptors = []describe.Route{
 
 						Successes: []describe.Response{
 							{
-								Description: "post returned",
+								Description: "user returned",
 								StatusCode:  http.StatusOK,
 								Headers: []describe.Parameter{
 									versionHeader,
@@ -350,6 +350,32 @@ var routeDescriptors = []describe.Route{
 								Body: describe.Body{
 									ContentType: "application/json; charset=utf-8",
 									Format:      blogPostBody,
+								},
+							},
+						},
+					},
+				},
+			},
+			{
+				Method:      "DELETE",
+				Description: "Delete a user",
+				Requests: []describe.Request{
+					{
+						Headers: []describe.Parameter{
+							hostHeader,
+						},
+
+						PathParameters: []describe.Parameter{
+							postNameParameter,
+						},
+
+						Successes: []describe.Response{
+							{
+								Description: "user deleted",
+								StatusCode:  http.StatusNoContent,
+								Headers: []describe.Parameter{
+									versionHeader,
+									zeroContentLengthHeader,
 								},
 							},
 						},

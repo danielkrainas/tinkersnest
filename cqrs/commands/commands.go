@@ -13,6 +13,10 @@ type DeletePost struct {
 	Name string
 }
 
+type DeleteUser struct {
+	Name string
+}
+
 type CreateClaim struct {
 	Code         string
 	ResourceType v1.ResourceType
