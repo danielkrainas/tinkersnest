@@ -60,6 +60,15 @@
 			"notests": true
 		},
 		{
+			"importpath": "golang.org/x/net/context",
+			"repository": "https://go.googlesource.com/net",
+			"vcs": "git",
+			"revision": "b1a2d6e8c8b5fc8f601ead62536f02a8e1b6217d",
+			"branch": "master",
+			"path": "/context",
+			"notests": true
+		},
+		{
 			"importpath": "golang.org/x/sys/unix",
 			"repository": "https://go.googlesource.com/sys",
 			"vcs": "git",
@@ -77,11 +86,27 @@
 			"notests": true
 		},
 		{
+			"importpath": "gopkg.in/mgo.v2",
+			"repository": "https://gopkg.in/mgo.v2",
+			"vcs": "git",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"branch": "v2",
+			"notests": true
+		},
+		{
 			"importpath": "gopkg.in/square/go-jose.v2",
 			"repository": "https://gopkg.in/square/go-jose.v2",
 			"vcs": "git",
 			"revision": "296c7f1463ec9b712176dc804dea0173d06dc728",
 			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "gopkg.in/tomb.v2",
+			"repository": "https://gopkg.in/tomb.v2",
+			"vcs": "git",
+			"revision": "d5d1b5820637886def9eef33e03a27a9f166942c",
+			"branch": "v2",
 			"notests": true
 		}
 	]
