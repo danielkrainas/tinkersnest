@@ -70,7 +70,7 @@ func (driver *Driver) UnmarshalText(text []byte) error {
 func (driver *Driver) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var driverMap map[string]Parameters
 	err := unmarshal(&driverMap)
-	if err == nil && len(driverMap) > 1 {
+	if err == nil && len(driverMap) > 0 {
 		types := make([]string, 0, len(driverMap))
 		for k := range driverMap {
 			types = append(types, k)

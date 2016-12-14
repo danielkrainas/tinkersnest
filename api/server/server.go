@@ -45,6 +45,10 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 		return nil, err
 	}
 
+	if err := storageDriver.Init(); err != nil {
+		return nil, err
+	}
+
 	query := &cqrs.QueryDispatcher{
 		Executors: []cqrs.QueryExecutor{
 			setupManager,

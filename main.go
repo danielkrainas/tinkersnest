@@ -12,6 +12,7 @@ import (
 	_ "github.com/danielkrainas/tinkersnest/cmd/version"
 	"github.com/danielkrainas/tinkersnest/context"
 	_ "github.com/danielkrainas/tinkersnest/storage/driver/inmemory"
+	_ "github.com/danielkrainas/tinkersnest/storage/driver/mongodb"
 )
 
 var appVersion string
