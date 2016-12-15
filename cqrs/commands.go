@@ -8,7 +8,6 @@ import (
 )
 
 var ErrNoHandler = errors.New("no command handler")
-var ErrInvalidCommand = errors.New("invalid command for this handler")
 
 type Command interface{}
 

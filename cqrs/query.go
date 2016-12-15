@@ -6,8 +6,7 @@ import (
 	"fmt"
 )
 
-var ErrNoExecutor = errors.New("no query executor")
-var ErrInvalidQuery = errors.New("invalid query for this executor")
+var ErrNoExecutor = errors.New("query was unhandled or invalid")
 
 type Query interface{}
 
