@@ -19,4 +19,5 @@ var (
 type Content struct {
 	Type string `json:"type" yaml:"type"`
 	Data []byte `json:"data" yaml:"data"`
+	Rel  string `json:"rel" yaml:"rel"`
 }
