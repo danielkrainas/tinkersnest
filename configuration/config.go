@@ -147,6 +147,7 @@ type Config struct {
 	Log     LogConfig  `yaml:"log"`
 	HTTP    HTTPConfig `yaml:"http"`
 	Storage Driver     `yaml:"storage"`
+	Blobs   Driver     `yaml:"blobs"`
 }
 
 type v1_0Config Config

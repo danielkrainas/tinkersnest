@@ -6,6 +6,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
+	_ "github.com/danielkrainas/tinkersnest/blobs/driver/inmemory"
 	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/cmd/root"
 	_ "github.com/danielkrainas/tinkersnest/cmd/serve"

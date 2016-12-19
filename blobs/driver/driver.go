@@ -7,8 +7,9 @@ import (
 )
 
 type Driver interface {
-	Store(b *blobs.Blob, r io.Reader) error
-	Exists(name string) (bool, error)
-	Get(name string) (*blobs.Blob, io.Reader, error)
+	Inspect(name string) (*blobs.Blob, error)
+	Writer(name string) (io.WriteCloser, error)
+	Reader(name string) (io.ReadCloser, error)
+	WriteMeta(name string, b *blobs.Blob) error
 	Drop(name string) (bool, error)
 }
