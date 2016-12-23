@@ -3,7 +3,7 @@ package v1
 import (
 	"net/http"
 
-	"github.com/danielkrainas/tinkersnest/api/errcode"
+	"github.com/danielkrainas/gobag/api/errcode"
 )
 
 const ErrorGroup = "tinkersnest.api.v1"

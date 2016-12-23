@@ -8,13 +8,14 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	cfg "github.com/danielkrainas/gobag/configuration"
+	"github.com/danielkrainas/gobag/context"
+	"github.com/danielkrainas/gobag/decouple/cqrs"
 	"github.com/rs/cors"
 	"github.com/urfave/negroni"
 
 	"github.com/danielkrainas/tinkersnest/api/server/handlers"
 	"github.com/danielkrainas/tinkersnest/configuration"
-	"github.com/danielkrainas/tinkersnest/context"
-	"github.com/danielkrainas/tinkersnest/cqrs"
 	"github.com/danielkrainas/tinkersnest/setup"
 	"github.com/danielkrainas/tinkersnest/storage"
 )
@@ -201,7 +202,7 @@ func configureLogging(ctx context.Context, config *configuration.Config) (contex
 	return ctx, nil
 }
 
-func logLevel(level configuration.LogLevel) log.Level {
+func logLevel(level cfg.LogLevel) log.Level {
 	l, err := log.ParseLevel(string(level))
 	if err != nil {
 		l = log.InfoLevel

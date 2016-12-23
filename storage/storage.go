@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 
+	cfg "github.com/danielkrainas/gobag/configuration"
+	"github.com/danielkrainas/gobag/context"
+
 	"github.com/danielkrainas/tinkersnest/configuration"
-	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/storage/driver"
 	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
 )
@@ -17,7 +19,7 @@ var (
 func FromConfig(config *configuration.Config) (driver.Driver, error) {
 	params := config.Storage.Parameters()
 	if params == nil {
-		params = make(configuration.Parameters)
+		params = make(cfg.Parameters)
 	}
 
 	d, err := factory.Create(config.Storage.Type(), params)

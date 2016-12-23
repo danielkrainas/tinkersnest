@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/danielkrainas/tinkersnest/cmd"
-	"github.com/danielkrainas/tinkersnest/context"
+	"github.com/danielkrainas/gobag/cmd"
+	"github.com/danielkrainas/gobag/context"
 )
 
 func init() {

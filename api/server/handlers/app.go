@@ -2,20 +2,20 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
-	"errors"
 
+	"github.com/danielkrainas/gobag/api/errcode"
+	"github.com/danielkrainas/gobag/context"
+	"github.com/danielkrainas/gobag/decouple/cqrs"
 	"github.com/gorilla/mux"
 
-	"github.com/danielkrainas/tinkersnest/api/errcode"
 	"github.com/danielkrainas/tinkersnest/api/v1"
-	"github.com/danielkrainas/tinkersnest/configuration"
-	"github.com/danielkrainas/tinkersnest/context"
 	"github.com/danielkrainas/tinkersnest/auth"
-	"github.com/danielkrainas/tinkersnest/cqrs"
-	"github.com/danielkrainas/tinkersnest/cqrs/queries"
+	"github.com/danielkrainas/tinkersnest/configuration"
+	"github.com/danielkrainas/tinkersnest/queries"
 	"github.com/danielkrainas/tinkersnest/storage"
 )
 
@@ -100,7 +100,7 @@ func (app *App) authorizeUser(ctx *appRequestContext, r *http.Request) error {
 		} else if routeName != v1.RouteNameAuth {
 			return errors.New("invalid bearer token")
 		}
-	} 
+	}
 
 	userName, err := auth.VerifyBearerToken(bearer)
 	if err != nil {

@@ -5,13 +5,13 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/danielkrainas/gobag/cmd"
+	"github.com/danielkrainas/gobag/context"
 
 	_ "github.com/danielkrainas/tinkersnest/blobs/driver/inmemory"
-	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/cmd/root"
 	_ "github.com/danielkrainas/tinkersnest/cmd/serve"
 	_ "github.com/danielkrainas/tinkersnest/cmd/version"
-	"github.com/danielkrainas/tinkersnest/context"
 	_ "github.com/danielkrainas/tinkersnest/storage/driver/inmemory"
 	_ "github.com/danielkrainas/tinkersnest/storage/driver/mongodb"
 )

@@ -5,10 +5,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/danielkrainas/gobag/decouple/cqrs"
+
 	"github.com/danielkrainas/tinkersnest/api/v1"
-	"github.com/danielkrainas/tinkersnest/cqrs"
-	"github.com/danielkrainas/tinkersnest/cqrs/commands"
-	"github.com/danielkrainas/tinkersnest/cqrs/queries"
+	"github.com/danielkrainas/tinkersnest/commands"
+	"github.com/danielkrainas/tinkersnest/queries"
 	"github.com/danielkrainas/tinkersnest/storage"
 )
 

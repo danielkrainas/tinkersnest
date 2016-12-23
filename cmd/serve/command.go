@@ -3,8 +3,9 @@ package serve
 import (
 	"context"
 
+	"github.com/danielkrainas/gobag/cmd"
+
 	"github.com/danielkrainas/tinkersnest/api/server"
-	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/configuration"
 )
 

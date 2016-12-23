@@ -6,12 +6,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/danielkrainas/gobag/context"
+	"github.com/danielkrainas/gobag/decouple/cqrs"
+	"github.com/danielkrainas/gobag/util/token"
+
 	"github.com/danielkrainas/tinkersnest/api/v1"
-	"github.com/danielkrainas/tinkersnest/context"
-	"github.com/danielkrainas/tinkersnest/cqrs"
-	"github.com/danielkrainas/tinkersnest/cqrs/commands"
-	"github.com/danielkrainas/tinkersnest/cqrs/queries"
-	"github.com/danielkrainas/tinkersnest/util/token"
+	"github.com/danielkrainas/tinkersnest/commands"
+	"github.com/danielkrainas/tinkersnest/queries"
 )
 
 type SetupManager struct {

@@ -3,16 +3,16 @@ package mongodb
 import (
 	"errors"
 
+	"github.com/danielkrainas/gobag/decouple/cqrs"
+	"github.com/danielkrainas/gobag/decouple/drivers"
 	"gopkg.in/mgo.v2"
 
-	"github.com/danielkrainas/tinkersnest/cqrs"
-	storage "github.com/danielkrainas/tinkersnest/storage/driver"
 	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
 )
 
 type driverFactory struct{}
 
-func (f *driverFactory) Create(parameters map[string]interface{}) (storage.Driver, error) {
+func (f *driverFactory) Create(parameters map[string]interface{}) (drivers.DriverBase, error) {
 	url, ok := parameters["url"].(string)
 	if !ok || url == "" {
 		return nil, errors.New("url parameter invalid or missing")

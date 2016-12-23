@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/danielkrainas/tinkersnest/api/describe"
-	"github.com/danielkrainas/tinkersnest/api/errcode"
+	"github.com/danielkrainas/gobag/api/describe"
+	"github.com/danielkrainas/gobag/api/errcode"
 )
 
 var (

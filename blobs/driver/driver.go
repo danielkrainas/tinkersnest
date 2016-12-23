@@ -3,10 +3,14 @@ package driver
 import (
 	"io"
 
+	"github.com/danielkrainas/gobag/decouple/drivers"
+
 	"github.com/danielkrainas/tinkersnest/blobs"
 )
 
 type Driver interface {
+	drivers.DriverBase
+
 	Inspect(name string) (*blobs.Blob, error)
 	Writer(name string) (io.WriteCloser, error)
 	Reader(name string) (io.ReadCloser, error)

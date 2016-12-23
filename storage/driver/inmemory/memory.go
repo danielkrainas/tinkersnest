@@ -1,8 +1,9 @@
 package inmemory
 
 import (
-	"github.com/danielkrainas/tinkersnest/cqrs"
-	storage "github.com/danielkrainas/tinkersnest/storage/driver"
+	"github.com/danielkrainas/gobag/decouple/cqrs"
+	"github.com/danielkrainas/gobag/decouple/drivers"
+
 	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
 )
 
@@ -22,7 +23,7 @@ func registerCommand(c cqrs.Command, handler cqrs.CommandHandler) {
 
 type driverFactory struct{}
 
-func (f *driverFactory) Create(parameters map[string]interface{}) (storage.Driver, error) {
+func (f *driverFactory) Create(parameters map[string]interface{}) (drivers.DriverBase, error) {
 	return &driver{}, nil
 }
 

@@ -1,43 +1,22 @@
 package factory
 
 import (
-	"fmt"
+	"github.com/danielkrainas/gobag/decouple/drivers"
 
 	"github.com/danielkrainas/tinkersnest/storage/driver"
 )
 
 const assetType = "Storage"
 
-var factories = make(map[string]DriverFactory)
-
-type DriverFactory interface {
-	Create(parameters map[string]interface{}) (driver.Driver, error)
+var registry = &drivers.Registry{
+	AssetType: "Storage",
 }
 
-func Register(name string, factory DriverFactory) {
-	if factory == nil {
-		panic(fmt.Sprintf("%s DriverFactory cannot be nil", assetType))
-	}
-
-	if _, registered := factories[name]; registered {
-		panic(fmt.Sprintf("%s DriverFactory named %s already registered", assetType, name))
-	}
-
-	factories[name] = factory
+func Register(name string, factory drivers.Factory) {
+	registry.Register(name, factory)
 }
 
 func Create(name string, parameters map[string]interface{}) (driver.Driver, error) {
-	if factory, ok := factories[name]; ok {
-		return factory.Create(parameters)
-	}
-
-	return nil, InvalidDriverError{name}
-}
-
-type InvalidDriverError struct {
-	Name string
-}
-
-func (err InvalidDriverError) Error() string {
-	return fmt.Sprintf("%s driver not registered: %s", assetType, err.Name)
+	d, err := registry.Create(name, parameters)
+	return d.(driver.Driver), err
 }

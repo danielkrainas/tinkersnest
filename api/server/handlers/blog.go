@@ -6,15 +6,15 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/danielkrainas/gobag/api/errcode"
+	"github.com/danielkrainas/gobag/context"
+	"github.com/danielkrainas/gobag/decouple/cqrs"
 	"github.com/gorilla/handlers"
 
-	"github.com/danielkrainas/tinkersnest/api/errcode"
 	"github.com/danielkrainas/tinkersnest/api/v1"
-	"github.com/danielkrainas/tinkersnest/context"
-	"github.com/danielkrainas/tinkersnest/cqrs"
+	"github.com/danielkrainas/tinkersnest/commands"
+	"github.com/danielkrainas/tinkersnest/queries"
 	"github.com/danielkrainas/tinkersnest/storage"
-	"github.com/danielkrainas/tinkersnest/cqrs/commands"
-	"github.com/danielkrainas/tinkersnest/cqrs/queries"
 )
 
 func blogListDispatcher(ctx context.Context, r *http.Request) http.Handler {
@@ -34,9 +34,9 @@ func postByNameDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	}
 
 	return handlers.MethodHandler{
-		"GET": withTraceLogging("GetPost", h.GetPost),
+		"GET":    withTraceLogging("GetPost", h.GetPost),
 		"DELETE": withTraceLogging("DeletePost", h.DeletePost),
-		"PUT": withTraceLogging("UpdatePost", h.UpdatePost),
+		"PUT":    withTraceLogging("UpdatePost", h.UpdatePost),
 	}
 }
 
@@ -107,7 +107,7 @@ func (ctx *blogHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 		} else {
 			acontext.GetLogger(ctx).Error(err)
 			ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
-			return	
+			return
 		}
 	}
 

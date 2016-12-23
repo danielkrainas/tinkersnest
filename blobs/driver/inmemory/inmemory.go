@@ -6,15 +6,16 @@ import (
 	"io/ioutil"
 	"sync"
 
+	"github.com/danielkrainas/gobag/decouple/drivers"
+	"github.com/danielkrainas/gobag/util/bagio"
+
 	"github.com/danielkrainas/tinkersnest/blobs"
-	blobsdriver "github.com/danielkrainas/tinkersnest/blobs/driver"
 	"github.com/danielkrainas/tinkersnest/blobs/driver/factory"
-	"github.com/danielkrainas/tinkersnest/util/myio"
 )
 
 type driverFactory struct{}
 
-func (df *driverFactory) Create(parameters map[string]interface{}) (blobsdriver.Driver, error) {
+func (df *driverFactory) Create(parameters map[string]interface{}) (drivers.DriverBase, error) {
 	return &driver{
 		blobs: make(map[string]*blobDescriptor, 0),
 	}, nil
@@ -75,7 +76,7 @@ func (d *driver) Writer(name string) (io.WriteCloser, error) {
 
 	w := bytes.NewBuffer(make([]byte, 0, 0))
 	desc.data = w
-	return myio.NopWriteCloser(w), nil
+	return bagio.NopWriteCloser(w), nil
 }
 
 func (d *driver) Reader(name string) (io.ReadCloser, error) {

@@ -7,14 +7,14 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/danielkrainas/gobag/api/errcode"
+	"github.com/danielkrainas/gobag/context"
+	"github.com/danielkrainas/gobag/decouple/cqrs"
 	"github.com/gorilla/handlers"
 
-	"github.com/danielkrainas/tinkersnest/api/errcode"
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/auth"
-	"github.com/danielkrainas/tinkersnest/context"
-	"github.com/danielkrainas/tinkersnest/cqrs"
-	"github.com/danielkrainas/tinkersnest/cqrs/queries"
+	"github.com/danielkrainas/tinkersnest/queries"
 )
 
 func authDispatcher(ctx context.Context, r *http.Request) http.Handler {

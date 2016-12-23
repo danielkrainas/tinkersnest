@@ -6,15 +6,15 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/danielkrainas/gobag/api/errcode"
+	"github.com/danielkrainas/gobag/context"
+	"github.com/danielkrainas/gobag/decouple/cqrs"
 	"github.com/gorilla/handlers"
 
-	"github.com/danielkrainas/tinkersnest/api/errcode"
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/auth"
-	"github.com/danielkrainas/tinkersnest/context"
-	"github.com/danielkrainas/tinkersnest/cqrs"
-	"github.com/danielkrainas/tinkersnest/cqrs/commands"
-	"github.com/danielkrainas/tinkersnest/cqrs/queries"
+	"github.com/danielkrainas/tinkersnest/commands"
+	"github.com/danielkrainas/tinkersnest/queries"
 	"github.com/danielkrainas/tinkersnest/storage"
 )
 
@@ -35,9 +35,9 @@ func userByNameDispatcher(ctx context.Context, r *http.Request) http.Handler {
 	}
 
 	return handlers.MethodHandler{
-		"GET": withTraceLogging("GetUser", h.GetUser),
+		"GET":    withTraceLogging("GetUser", h.GetUser),
 		"DELETE": withTraceLogging("DeleteUser", h.DeleteUser),
-		"PUT": withTraceLogging("UpdateUser", h.UpdateUser),
+		"PUT":    withTraceLogging("UpdateUser", h.UpdateUser),
 	}
 }
 
@@ -111,7 +111,7 @@ func (ctx *userHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		} else {
 			acontext.GetLogger(ctx).Error(err)
 			ctx.Context = acontext.AppendError(ctx, errcode.ErrorCodeUnknown.WithDetail(err))
-			return	
+			return
 		}
 	}
 
