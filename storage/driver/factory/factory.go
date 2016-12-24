@@ -6,8 +6,6 @@ import (
 	"github.com/danielkrainas/tinkersnest/storage/driver"
 )
 
-const assetType = "Storage"
-
 var registry = &drivers.Registry{
 	AssetType: "Storage",
 }
