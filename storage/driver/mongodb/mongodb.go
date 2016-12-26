@@ -10,6 +10,12 @@ import (
 	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
 )
 
+const (
+	postsCollection  = "posts"
+	claimsCollection = "claims"
+	usersCollection  = "users"
+)
+
 type driverFactory struct{}
 
 func (f *driverFactory) Create(parameters map[string]interface{}) (drivers.DriverBase, error) {
@@ -53,9 +59,9 @@ type driver struct {
 var _ storage.Driver = &driver{}
 
 func (d *driver) Init() error {
-	d.users = newUserStore(d)
-	d.posts = newPostStore(d)
-	d.claims = newClaimStore(d)
+	d.users = &userStore{d.db}
+	d.posts = &postStore{d.db}
+	d.claims = &claimStore{d.db}
 
 	nameIndex := mgo.Index{
 		Key:        []string{"name"},

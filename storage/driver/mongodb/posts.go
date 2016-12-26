@@ -8,13 +8,6 @@ import (
 	"github.com/danielkrainas/tinkersnest/storage"
 )
 
-const postsCollection = "posts"
-
-func newPostStore(driver *driver) *postStore {
-	store := &postStore{driver.db}
-	return store
-}
-
 type postStore struct {
 	db *mgo.Database
 }

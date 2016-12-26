@@ -8,13 +8,6 @@ import (
 	"github.com/danielkrainas/tinkersnest/storage"
 )
 
-const claimsCollection = "claims"
-
-func newClaimStore(driver *driver) *claimStore {
-	store := &claimStore{driver.db}
-	return store
-}
-
 type claimStore struct {
 	db *mgo.Database
 }

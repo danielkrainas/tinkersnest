@@ -8,13 +8,6 @@ import (
 	"github.com/danielkrainas/tinkersnest/storage"
 )
 
-const usersCollection = "users"
-
-func newUserStore(driver *driver) *userStore {
-	store := &userStore{driver.db}
-	return store
-}
-
 type userStore struct {
 	db *mgo.Database
 }
