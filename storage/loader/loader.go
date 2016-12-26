@@ -8,7 +8,7 @@ import (
 	"github.com/danielkrainas/gobag/context"
 
 	"github.com/danielkrainas/tinkersnest/configuration"
-	"github.com/danielkrainas/tinkersnest/storage/driver"
+	"github.com/danielkrainas/tinkersnest/storage"
 	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
 )
 
@@ -16,7 +16,7 @@ var (
 	ErrNotFound = errors.New("not found")
 )
 
-func FromConfig(config *configuration.Config) (driver.Driver, error) {
+func FromConfig(config *configuration.Config) (storage.Driver, error) {
 	params := config.Storage.Parameters()
 	if params == nil {
 		params = make(cfg.Parameters)

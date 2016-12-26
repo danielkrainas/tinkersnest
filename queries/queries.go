@@ -15,3 +15,5 @@ type FindClaim struct {
 type FindUser struct {
 	Name string
 }
+
+type SearchUsers struct{}

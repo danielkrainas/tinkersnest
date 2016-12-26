@@ -14,10 +14,11 @@ import (
 	"github.com/rs/cors"
 	"github.com/urfave/negroni"
 
+	"github.com/danielkrainas/tinkersnest/actions"
 	"github.com/danielkrainas/tinkersnest/api/server/handlers"
 	"github.com/danielkrainas/tinkersnest/configuration"
 	"github.com/danielkrainas/tinkersnest/setup"
-	"github.com/danielkrainas/tinkersnest/storage"
+	"github.com/danielkrainas/tinkersnest/storage/loader"
 )
 
 type Server struct {
@@ -40,18 +41,22 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 	log.Info("initializing server")
 
 	setupManager := &setup.SetupManager{}
+	ap, err := actions.FromConfig(config)
+	if err != nil {
+		return nil, err
+	}
 
 	query := &cqrs.QueryDispatcher{
 		Executors: []cqrs.QueryExecutor{
 			setupManager,
-			storageDriver.Query(),
+			ap,
 		},
 	}
 
 	command := &cqrs.CommandDispatcher{
 		Handlers: []cqrs.CommandHandler{
 			setupManager,
-			storageDriver.Command(),
+			ap,
 		},
 	}
 
@@ -94,7 +99,7 @@ func New(ctx context.Context, config *configuration.Config) (*Server, error) {
 	}
 
 	log.Infof("using %q logging formatter", config.Log.Formatter)
-	storage.LogSummary(ctx, config)
+	storageloader.LogSummary(ctx, config)
 
 	if err := setupManager.Bootstrap(ctx); err != nil {
 		return nil, err
