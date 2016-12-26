@@ -3,10 +3,10 @@ package mongodb
 import (
 	"errors"
 
-	"github.com/danielkrainas/gobag/decouple/cqrs"
 	"github.com/danielkrainas/gobag/decouple/drivers"
 	"gopkg.in/mgo.v2"
 
+	"github.com/danielkrainas/tinkersnest/storage"
 	"github.com/danielkrainas/tinkersnest/storage/driver/factory"
 )
 
@@ -25,12 +25,16 @@ func (f *driverFactory) Create(parameters map[string]interface{}) (drivers.Drive
 
 	session.SetMode(mgo.Monotonic, true)
 
-	return &driver{
+	d := &driver{
 		session: session,
 		db:      session.DB(""),
-		qr:      &cqrs.QueryRouter{},
-		cr:      &cqrs.CommandRouter{},
-	}, nil
+	}
+
+	if err := d.Init(); err != nil {
+		return nil, err
+	}
+
+	return d, nil
 }
 
 func init() {
@@ -41,21 +45,12 @@ type driver struct {
 	session *mgo.Session
 	db      *mgo.Database
 
-	qr *cqrs.QueryRouter
-	cr *cqrs.CommandRouter
-
 	users  *userStore
 	posts  *postStore
 	claims *claimStore
 }
 
-func (d *driver) registerQuery(q cqrs.Query, exec cqrs.QueryExecutor) {
-	d.qr.Register(q, exec)
-}
-
-func (d *driver) registerCommand(c cqrs.Command, handler cqrs.CommandHandler) {
-	d.cr.Register(c, handler)
-}
+var _ storage.Driver = &driver{}
 
 func (d *driver) Init() error {
 	d.users = newUserStore(d)
@@ -71,13 +66,26 @@ func (d *driver) Init() error {
 	}
 
 	d.db.C(postsCollection).EnsureIndex(nameIndex)
+	d.db.C(usersCollection).EnsureIndex(nameIndex)
+	d.db.C(claimsCollection).EnsureIndex(mgo.Index{
+		Key:        []string{"code"},
+		Unique:     true,
+		DropDups:   true,
+		Background: true,
+		Sparse:     false,
+	})
+
 	return nil
 }
 
-func (d *driver) Command() cqrs.CommandHandler {
-	return d.cr
+func (d *driver) Users() storage.UserStore {
+	return d.users
 }
 
-func (d *driver) Query() cqrs.QueryExecutor {
-	return d.qr
+func (d *driver) Posts() storage.PostStore {
+	return d.posts
+}
+
+func (d *driver) Claims() storage.ClaimStore {
+	return d.claims
 }
