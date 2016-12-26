@@ -19,6 +19,8 @@ type postStore struct {
 	db *mgo.Database
 }
 
+var _ storage.PostStore = &postStore{}
+
 func (s *postStore) Delete(name string) error {
 	return s.db.C(postsCollection).Remove(nameQuery(name))
 }

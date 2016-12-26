@@ -19,6 +19,8 @@ type userStore struct {
 	db *mgo.Database
 }
 
+var _ storage.UserStore = &userStore{}
+
 func (s *userStore) Delete(name string) error {
 	return s.db.C(usersCollection).Remove(nameQuery(name))
 }

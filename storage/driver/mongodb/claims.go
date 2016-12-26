@@ -19,6 +19,8 @@ type claimStore struct {
 	db *mgo.Database
 }
 
+var _ storage.ClaimStore = &claimStore{}
+
 func (s *claimStore) Store(c *v1.Claim, isNew bool) error {
 	claims := s.db.C(claimsCollection)
 	_, err := claims.Upsert(bson.M{"code": c.Code}, bson.M{"$set": c})
