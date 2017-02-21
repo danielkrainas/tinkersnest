@@ -1,6 +1,12 @@
 package queries
 
-type SearchPosts struct{}
+import (
+	"github.com/danielkrainas/tinkersnest/api/v1"
+)
+
+type SearchPosts struct {
+	Author *v1.Author
+}
 
 type FindPost struct {
 	Name string

@@ -6,6 +6,7 @@ const (
 	RouteNameBase         = "base"
 	RouteNameBlog         = "blog"
 	RouteNamePostByName   = "post-by-name"
+	RouteNamePostsByUser  = "posts-by-user"
 	RouteNameUserRegistry = "users"
 	RouteNameUserByName   = "user-by-name"
 	RouteNameAuth         = "auth"

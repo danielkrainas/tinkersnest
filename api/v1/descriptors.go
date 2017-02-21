@@ -447,6 +447,45 @@ var routeDescriptors = []describe.Route{
 		},
 	},
 	{
+		Name:        RouteNamePostsByUser,
+		Path:        "/v1/users/{user_name}/posts",
+		Entity:      "[]Post",
+		Description: "Route to retrieve the list of posts from a user.",
+		Methods: []describe.Method{
+			{
+				Method:      "GET",
+				Description: "Get all posts authored by a user",
+				Requests: []describe.Request{
+					{
+						Headers: []describe.Parameter{
+							hostHeader,
+						},
+
+						PathParameters: []describe.Parameter{
+							userNameParameter,
+						},
+
+						Successes: []describe.Response{
+							{
+								Description: "All posts returned",
+								StatusCode:  http.StatusOK,
+								Headers: []describe.Parameter{
+									versionHeader,
+									jsonContentLengthHeader,
+								},
+
+								Body: describe.Body{
+									ContentType: "application/json; charset=utf-8",
+									Format:      blogPostListBody,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
 		Name:        RouteNameUserRegistry,
 		Path:        "/v1/users",
 		Entity:      "[]User",

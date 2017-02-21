@@ -10,6 +10,7 @@ import (
 	"github.com/danielkrainas/gobag/context"
 	"github.com/danielkrainas/gobag/decouple/cqrs"
 	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 
 	"github.com/danielkrainas/tinkersnest/api/v1"
 	"github.com/danielkrainas/tinkersnest/commands"
@@ -164,7 +165,13 @@ func (ctx *blogHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ctx *blogHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	posts, err := cqrs.DispatchQuery(ctx, &queries.SearchPosts{})
+	q := &queries.SearchPosts{}
+	routeName := mux.CurrentRoute(r).GetName()
+	if routeName == v1.RouteNamePostsByUser {
+		q.Author = &v1.Author{User: acontext.GetStringValue(ctx, "vars.user_name")}
+	}
+
+	posts, err := cqrs.DispatchQuery(ctx, q)
 	if err != nil {
 		acontext.GetLogger(ctx).Error(err)
 		ctx.Context = acontext.AppendError(ctx.Context, errcode.ErrorCodeUnknown.WithDetail(err))
