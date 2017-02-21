@@ -7,9 +7,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/danielkrainas/gobag/cmd"
+
 	"github.com/danielkrainas/tinkersnest/api/client"
 	"github.com/danielkrainas/tinkersnest/api/v1"
-	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/tinkerctl/resource"
 )
 

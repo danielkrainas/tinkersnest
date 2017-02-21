@@ -10,10 +10,10 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/danielkrainas/gobag/cmd"
 	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/danielkrainas/tinkersnest/api/client"
-	"github.com/danielkrainas/tinkersnest/cmd"
 	"github.com/danielkrainas/tinkersnest/tinkerctl/local"
 )
 

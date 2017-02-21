@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"reflect"
 
-	"github.com/danielkrainas/tinkersnest/configuration"
+	cfg "github.com/danielkrainas/gobag/configuration"
 )
 
 type v1_0Resource Resource
@@ -17,9 +17,9 @@ func Parse(rd io.Reader) (*Resource, error) {
 		return nil, err
 	}
 
-	p := configuration.NewParser("tinkerctl", []configuration.VersionedParseInfo{
+	p := cfg.NewParser("tinkerctl", []cfg.VersionedParseInfo{
 		{
-			Version: configuration.MajorMinorVersion(1, 0),
+			Version: cfg.MajorMinorVersion(1, 0),
 			ParseAs: reflect.TypeOf(v1_0Resource{}),
 			ConversionFunc: func(c interface{}) (interface{}, error) {
 				if v1_0, ok := c.(*v1_0Resource); ok {

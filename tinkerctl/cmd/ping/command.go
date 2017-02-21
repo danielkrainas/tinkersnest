@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/danielkrainas/gobag/cmd"
+
 	"github.com/danielkrainas/tinkersnest/api/client"
-	"github.com/danielkrainas/tinkersnest/cmd"
 )
 
 func init() {
