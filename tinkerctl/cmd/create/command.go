@@ -123,6 +123,10 @@ func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
 		Content: make([]*v1.Content, 0),
 	}
 
+	if author, ok := m["author"].(*v1.Author); ok {
+		p.Author = author
+	}
+
 	if created, ok := m["created"].(int64); ok {
 		p.Created = created
 	}

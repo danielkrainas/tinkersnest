@@ -119,6 +119,10 @@ func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
 		p.Publish = publish
 	}
 
+	if author, ok := m["author"].(*v1.Author); ok {
+		p.Author = author
+	}
+
 	contents, ok := m["content"].([]interface{})
 	if !ok {
 		return nil, errors.New("missing 'content' in post spec")
