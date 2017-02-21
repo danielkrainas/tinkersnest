@@ -110,6 +110,7 @@ func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
 		Title:   m["title"].(string),
 		Publish: false,
 		Content: make([]*v1.Content, 0),
+		Tags:    make([]string, 0),
 	}
 
 	if created, ok := m["created"].(int64); ok {
@@ -122,6 +123,10 @@ func postFromSpec(name string, spec map[string]interface{}) (*v1.Post, error) {
 
 	if author, ok := m["author"].(*v1.Author); ok {
 		p.Author = author
+	}
+
+	if tags, ok := m["tags"].([]string); ok {
+		p.Tags = tags
 	}
 
 	contents, ok := m["content"].([]interface{})

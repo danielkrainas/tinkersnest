@@ -7,6 +7,7 @@ type Post struct {
 	Author  *Author    `json:"author" yaml:"author"`
 	Created int64      `json:"created" yaml:"created"`
 	Content []*Content `json:"content" yaml:"content"`
+	Tags    []string   `json:"tags" yaml:"tags"`
 }
 
 type Author struct {
